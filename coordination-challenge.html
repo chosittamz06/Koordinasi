@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Coordination Challenge — Misi Integrasi Sistem Koordinasi</title>
+<style>
+:root{
+  --bg0:#050f26;--bg1:#0a1d49;--bg2:#12306e;
+  --card:rgba(255,255,255,.075);--card2:rgba(255,255,255,.12);--line:rgba(255,255,255,.16);
+  --txt:#f5f9ff;--mut:#adc0e6;
+  --blue:#38bdf8;--blue2:#2563eb;--green:#34d399;--green2:#059669;--purple:#a78bfa;--purple2:#7c3aed;--yellow:#fde047;--yellow2:#f59e0b;--red:#fb7185;--red2:#e11d48;
+  --r:1.1rem;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:max(12px,min(1.25vw,2.2vh))}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg0);color:var(--txt);
+  font-family:"Segoe UI","Trebuchet MS",system-ui,-apple-system,"Helvetica Neue",Arial,"Noto Sans",sans-serif;line-height:1.35}
+body{background:
+  radial-gradient(60rem 40rem at 85% -10%,rgba(124,58,237,.35),transparent 60%),
+  radial-gradient(50rem 40rem at -10% 110%,rgba(37,99,235,.38),transparent 60%),
+  linear-gradient(160deg,var(--bg1),var(--bg0) 70%);}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.10) 1px,transparent 1.5px);background-size:2.2rem 2.2rem}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+button:disabled{cursor:not-allowed}
+#app{position:relative;height:100%}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:90}
+.stage{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:.7rem;padding:.8rem 1.1rem}
+.stage.enter{animation:pgIn .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes pgIn{from{opacity:0;transform:translateY(1.2rem) scale(.985)}to{opacity:1;transform:none}}
+
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;gap:1rem;min-height:3.4rem}
+.brand{display:flex;align-items:center;gap:.7rem}
+.logo{width:3rem;height:3rem;border-radius:.9rem;display:grid;place-items:center;font-size:1.7rem;background:linear-gradient(135deg,var(--purple2),var(--blue2));box-shadow:0 .3rem 1rem rgba(124,58,237,.5)}
+.top .brand>div:last-child{display:none}
+.brand b{display:block;font-size:.95rem;letter-spacing:.12em;font-weight:900}
+.brand small{color:var(--mut);font-size:.72rem}
+.rtitle{flex:1;min-width:0}
+.rtitle h1{margin:0;font-size:1.35rem;font-weight:900;letter-spacing:.02em;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:linear-gradient(90deg,#fff,var(--blue) 55%,var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rtitle p{margin:.15rem 0 0;color:var(--mut);font-size:.9rem;font-weight:600;white-space:nowrap}
+.steps{display:flex;gap:.4rem;align-items:center}
+.stp{padding:.25rem .65rem;border-radius:2rem;font-weight:800;font-size:.8rem;background:var(--card);border:1px solid var(--line);color:var(--mut);white-space:nowrap}
+.stp.on{background:linear-gradient(90deg,var(--purple2),var(--blue2));color:#fff;border-color:transparent;box-shadow:0 0 1rem rgba(124,58,237,.6)}
+.stp.ok{background:rgba(52,211,153,.18);color:var(--green);border-color:rgba(52,211,153,.4)}
+.ctrls{display:flex;gap:.5rem;align-items:center}
+.ibtn{min-width:max(48px,2.9rem);min-height:max(48px,2.9rem);border-radius:.9rem;background:var(--card);border:1px solid var(--line);font-size:1.25rem;display:grid;place-items:center}
+.ibtn:active{transform:scale(.94)}
+.tbtn{min-height:max(48px,2.9rem);padding:0 1rem;border-radius:.9rem;border:2px dashed var(--purple);color:#e4d9ff;font-weight:800;font-size:.9rem;background:rgba(124,58,237,.18)}
+
+/* ---------- buttons ---------- */
+.btn{min-height:max(48px,3.2rem);padding:.7rem 1.6rem;border-radius:1rem;font-weight:900;font-size:1.05rem;letter-spacing:.03em;color:#fff;
+  background:linear-gradient(180deg,#4f8dff,var(--blue2));box-shadow:0 .35rem 0 #1e3a8a,0 .8rem 1.4rem rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s,filter .2s;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
+.btn:active:not(:disabled){transform:translateY(.25rem);box-shadow:0 .1rem 0 #1e3a8a,0 .3rem .8rem rgba(0,0,0,.35)}
+.btn.go{background:linear-gradient(180deg,#34d399,var(--green2));box-shadow:0 .35rem 0 #065f46,0 .8rem 1.4rem rgba(0,0,0,.35)}
+.btn.warn{background:linear-gradient(180deg,#fde047,var(--yellow2));color:#3b2300;box-shadow:0 .35rem 0 #92400e,0 .8rem 1.4rem rgba(0,0,0,.35)}
+.btn.danger{background:linear-gradient(180deg,#fb7185,var(--red2));box-shadow:0 .35rem 0 #881337,0 .8rem 1.4rem rgba(0,0,0,.35)}
+.btn.ghost{background:var(--card2);box-shadow:none;border:1px solid var(--line)}
+.btn.teach{background:rgba(124,58,237,.25);border:2px dashed var(--purple);box-shadow:none;color:#efe7ff}
+.btn.teach.solid{background:linear-gradient(180deg,#8b5cf6,var(--purple2));border:0;box-shadow:0 .35rem 0 #4c1d95,0 .8rem 1.4rem rgba(0,0,0,.35)}
+.btn.big{font-size:1.5rem;padding:1rem 3rem;min-height:4.4rem;border-radius:1.3rem}
+.btn:disabled{filter:grayscale(.9) brightness(.6);box-shadow:none;transform:none}
+.btn.sm{min-height:max(48px,2.6rem);padding:.4rem 1rem;font-size:.9rem;box-shadow:0 .2rem 0 rgba(0,0,0,.35)}
+
+/* ---------- home ---------- */
+.home{height:100%;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:1.5rem;padding:1.4rem 2rem;align-items:center}
+.home .l{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.eyebrow{display:inline-flex;gap:.6rem;align-items:center;align-self:flex-start;padding:.35rem 1rem;border-radius:2rem;background:rgba(253,224,71,.14);border:1px solid rgba(253,224,71,.5);color:var(--yellow);font-weight:900;letter-spacing:.12em;font-size:.9rem}
+.home h1{margin:0;font-size:3.5rem;line-height:.98;font-weight:900;letter-spacing:.01em;
+  background:linear-gradient(95deg,#fff 10%,var(--blue) 55%,var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 3rem rgba(56,189,248,.25)}
+.home h2{margin:0;font-size:1.65rem;font-weight:700;color:#dbe8ff}
+.pills{display:flex;gap:.6rem;flex-wrap:wrap}
+.pill{padding:.35rem .9rem;border-radius:2rem;font-weight:800;font-size:.9rem;border:1px solid var(--line);background:var(--card)}
+.pill.a{color:#fda4af}.pill.b{color:#7dd3fc}.pill.c{color:#fde68a}
+.tcards{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.tcard{border-radius:1.1rem;padding:.75rem .9rem;background:linear-gradient(160deg,color-mix(in srgb,var(--tc) 38%,#0b1a40),#0a1636);border:2px solid var(--tc);box-shadow:0 .5rem 1.4rem rgba(0,0,0,.3),inset 0 0 2rem color-mix(in srgb,var(--tc) 18%,transparent);animation:fadeUp .6s both}
+.tcard small{display:block;font-size:.72rem;color:var(--mut);font-weight:700;margin-bottom:.25rem}
+.tcard .tt{display:flex;align-items:center;gap:.6rem}
+.tdot{width:2.4rem;height:2.4rem;border-radius:50%;background:var(--tc);flex:none;display:grid;place-items:center;font-weight:900;color:var(--ti);box-shadow:0 0 1rem var(--tc)}
+.tname{width:100%;min-height:max(48px,2.9rem);font:inherit;font-weight:800;font-size:1.15rem;color:#fff;background:rgba(0,0,0,.3);border:2px solid rgba(255,255,255,.22);border-radius:.7rem;padding:.2rem .8rem;outline:none}
+.tname:focus{border-color:var(--tc);box-shadow:0 0 0 .2rem color-mix(in srgb,var(--tc) 45%,transparent)}
+.home .startrow{display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap}
+.facts{display:flex;gap:1.4rem;color:var(--mut);font-weight:700;font-size:.9rem}
+.facts b{color:#fff;font-size:1.15rem}
+.art{position:relative;aspect-ratio:1.18;max-height:92%;width:100%;justify-self:center}
+.art svg{width:100%;height:100%;overflow:visible}
+.orb{position:absolute;width:5.2rem;height:5.2rem;border-radius:50%;display:grid;place-items:center;font-size:2.6rem;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.35),rgba(255,255,255,.08));border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(4px);box-shadow:0 0 2rem rgba(56,189,248,.35);animation:floaty 5s ease-in-out infinite}
+.orb small{position:absolute;bottom:-1.5rem;font-size:.78rem;font-weight:800;color:#dbeafe;letter-spacing:.06em;white-space:nowrap}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-.9rem)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(1.4rem)}to{opacity:1;transform:none}}
+.fu{animation:fadeUp .7s both}
+.glowpulse{animation:glowp 3s ease-in-out infinite}
+@keyframes glowp{0%,100%{filter:drop-shadow(0 0 .8rem rgba(167,139,250,.5))}50%{filter:drop-shadow(0 0 1.8rem rgba(56,189,248,.9))}}
+.dash{stroke-dasharray:6 8;animation:dashm 2.2s linear infinite}
+@keyframes dashm{to{stroke-dashoffset:-56}}
+.nodep{animation:nodep 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes nodep{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+
+/* ---------- board ---------- */
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.bt{position:relative;border-radius:1rem;padding:.55rem .9rem;display:grid;grid-template-columns:auto 1fr auto;column-gap:.7rem;align-items:center;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--tc) 30%,#0b1a40),#0a1636);border:2px solid color-mix(in srgb,var(--tc) 55%,transparent);transition:transform .25s,box-shadow .25s}
+.bt .tdot{width:2.2rem;height:2.2rem}
+.bt .nm{font-weight:900;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt .sb{font-size:.78rem;color:var(--mut);font-weight:700}
+.bt .sc{font-size:2rem;font-weight:900;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.bt .sc small{font-size:.8rem;color:var(--mut);font-weight:700}
+.bt.turn{transform:translateY(-.3rem) scale(1.03);border-color:var(--tc);box-shadow:0 0 0 .2rem var(--tc),0 0 2rem var(--tc);animation:turnp 1.6s ease-in-out infinite}
+@keyframes turnp{50%{box-shadow:0 0 0 .2rem var(--tc),0 0 3rem var(--tc)}}
+.bt .tag{position:absolute;top:-.8rem;right:.8rem;background:var(--tc);color:var(--ti);font-weight:900;font-size:.68rem;padding:.12rem .6rem;border-radius:1rem;letter-spacing:.08em}
+.bump{animation:bump .6s}
+@keyframes bump{30%{transform:scale(1.35);color:var(--yellow)}}
+
+/* ---------- main area ---------- */
+.main{min-height:0;display:flex;flex-direction:column;gap:.7rem}
+.turnbar{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;padding:.5rem 1rem;border-radius:1rem;background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 55%,#0b1a40),rgba(255,255,255,.05));border:2px solid var(--tc)}
+.turnbar .who{font-size:1.4rem;font-weight:900}
+.turnbar .who span{background:var(--tc);color:var(--ti);padding:.1rem .8rem;border-radius:.6rem;margin-left:.3rem}
+.turnbar .hint{color:#e3ecff;font-weight:600;flex:1;font-size:1rem}
+.prog{display:flex;align-items:center;gap:.6rem;font-weight:800;font-size:.95rem;color:var(--mut)}
+.pbar{width:10rem;height:.7rem;border-radius:1rem;background:rgba(255,255,255,.14);overflow:hidden}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:1rem;transition:width .5s}
+.grid12{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:.8rem}
+.box{position:relative;border-radius:1.2rem;overflow:hidden;color:#fff;font-weight:900;display:grid;place-items:center;
+  background:linear-gradient(145deg,#6d4cff,#2f6bff 55%,#14b8e6);border:2px solid rgba(255,255,255,.35);
+  box-shadow:0 .4rem 0 rgba(10,20,80,.8),0 .9rem 1.6rem rgba(0,0,0,.35);transition:transform .15s,filter .2s;animation:fadeUp .5s both}
+.box::before{content:"";position:absolute;left:0;right:0;top:50%;height:.9rem;transform:translateY(-50%);background:rgba(253,224,71,.85);box-shadow:0 0 1rem rgba(253,224,71,.6)}
+.box::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:.9rem;transform:translateX(-50%);background:rgba(253,224,71,.85)}
+.box .no{position:relative;z-index:2;font-size:3.2rem;line-height:1;width:5.2rem;height:5.2rem;border-radius:50%;display:grid;place-items:center;background:#0b1a4a;border:3px solid var(--yellow);box-shadow:0 0 1.2rem rgba(0,0,0,.5)}
+.box .q{position:absolute;z-index:3;right:.7rem;bottom:.4rem;font-size:1.5rem;color:var(--yellow);text-shadow:0 .1rem .3rem rgba(0,0,0,.6)}
+.box:hover:not(:disabled){transform:translateY(-.25rem) rotate(-1deg);filter:brightness(1.12)}
+.box:active:not(:disabled){transform:scale(.96)}
+.box.used{background:linear-gradient(145deg,color-mix(in srgb,var(--tc) 45%,#18233f),#111a33);border-color:var(--tc);box-shadow:none;filter:saturate(.8);animation:none}
+.box.used::before,.box.used::after,.box.used .q{display:none}
+.box.used .no{background:rgba(0,0,0,.35);border-color:rgba(255,255,255,.4);font-size:2.2rem;width:4rem;height:4rem}
+.box .res{position:absolute;z-index:3;bottom:.5rem;left:0;right:0;text-align:center;font-size:1.05rem}
+.box .res b{background:rgba(0,0,0,.45);padding:.1rem .7rem;border-radius:1rem}
+.box.pend{border-color:var(--yellow);animation:turnp 1.4s infinite;--tc:var(--yellow)}
+
+/* ---------- question ---------- */
+.qwrap,.work{flex:1;min-height:0;display:flex;flex-direction:column;gap:.7rem}
+.qscroll{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:.6rem;padding:.5rem .6rem .4rem .3rem;margin:-.3rem -.4rem 0 -.3rem}
+.qfoot{display:flex;justify-content:flex-end;gap:.8rem;align-items:center;flex-wrap:wrap;padding-top:.1rem}
+.qhead .timer{width:3.9rem;height:3.9rem}.qhead .timer span{font-size:1.3rem}.qhead .timer circle{stroke-width:10}
+.qwrap.pop,.work.pop,.c3.pop{animation:popIn .45s cubic-bezier(.2,1.2,.3,1)}
+@keyframes popIn{from{opacity:0;transform:scale(.8) rotateX(30deg)}to{opacity:1;transform:none}}
+.qhead{display:flex;align-items:center;gap:1rem}
+.qhead .grow{flex:1}
+.badge{display:inline-flex;align-items:center;gap:.5rem;padding:.3rem 1rem;border-radius:2rem;font-weight:900;background:var(--tc);color:var(--ti);font-size:1.1rem}
+.badge.n{background:var(--card2);color:#fff;border:1px solid var(--line)}
+.qtext{font-size:1.7rem;font-weight:700;line-height:1.35;padding:1.1rem 1.4rem;border-radius:1.2rem;background:var(--card);border:1px solid var(--line);box-shadow:inset 0 0 3rem rgba(56,189,248,.08)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.opt{display:flex;align-items:center;gap:.9rem;text-align:left;padding:.8rem 1rem;min-height:4.4rem;border-radius:1.1rem;font-size:1.28rem;font-weight:700;line-height:1.25;
+  background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,.05));border:2px solid var(--line);transition:transform .1s,border-color .2s,background .2s}
+.opt .lt{flex:none;width:2.7rem;height:2.7rem;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:1.3rem;background:linear-gradient(135deg,var(--purple2),var(--blue2))}
+.opt:hover:not(:disabled){border-color:var(--blue);transform:translateY(-.1rem)}
+.opt:active:not(:disabled){transform:scale(.97)}
+.opt:disabled{cursor:default}
+.opt.right{background:linear-gradient(160deg,rgba(52,211,153,.5),rgba(5,150,105,.35));border-color:var(--green);animation:rightp .6s}
+.opt.right .lt{background:var(--green2)}
+.opt.wrong{background:linear-gradient(160deg,rgba(251,113,133,.5),rgba(225,29,72,.3));border-color:var(--red);animation:shake .45s}
+.opt.wrong .lt{background:var(--red2)}
+.opt.dim{opacity:.45}
+.fb .qtext{font-size:1.4rem;padding:.7rem 1.1rem}
+.fb .opt{min-height:3.3rem;font-size:1.08rem;padding:.35rem .9rem}.fb .opt .lt{width:2.2rem;height:2.2rem;font-size:1.1rem}
+.fb .verdict{font-size:1.25rem;padding:.35rem 1rem}.fb .verdict .pts{font-size:1.4rem}
+.fb .pemb{font-size:1.05rem;padding:.6rem 1rem}
+@keyframes rightp{40%{transform:scale(1.04)}}
+@keyframes shake{20%,60%{transform:translateX(-.5rem)}40%,80%{transform:translateX(.5rem)}}
+.verdict{display:flex;align-items:center;gap:1rem;padding:.6rem 1.2rem;border-radius:1.1rem;font-weight:900;font-size:1.5rem;animation:popIn .4s}
+.verdict.ok{background:rgba(52,211,153,.2);border:2px solid var(--green);color:#a7f3d0}
+.verdict.bad{background:rgba(251,113,133,.2);border:2px solid var(--red);color:#fecdd3}
+.verdict.mid{background:rgba(253,224,71,.16);border:2px solid var(--yellow);color:#fef08a}
+.verdict .pts{margin-left:auto;font-size:1.8rem}
+.pemb{padding:.8rem 1.2rem;border-radius:1.1rem;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.5);font-size:1.12rem;animation:fadeUp .5s}
+.pemb b{color:var(--blue)}
+.pemb .ans{display:block;margin-bottom:.3rem;font-weight:800;color:#fff}
+.rowend{display:flex;justify-content:flex-end;gap:.8rem;align-items:center;margin-top:auto;flex-wrap:wrap}
+
+/* timer */
+.timer{position:relative;width:5.6rem;height:5.6rem;flex:none}
+.timer svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer circle{fill:rgba(0,0,0,.25);stroke-width:9}
+.timer .bg{stroke:rgba(255,255,255,.18);fill:none}
+.timer .fg{stroke:var(--green);fill:none;stroke-linecap:round;stroke-dasharray:276.5;stroke-dashoffset:0;transition:stroke .3s}
+.timer span{position:absolute;inset:0;display:grid;place-items:center;font-size:1.9rem;font-weight:900;font-variant-numeric:tabular-nums}
+.timer.warn .fg{stroke:var(--red)}
+.timer.warn span{color:var(--red);animation:tp .5s infinite alternate}
+.timer.mid .fg{stroke:var(--yellow)}
+.timer.off .fg{stroke:rgba(255,255,255,.2)}
+.timer.off span{color:var(--mut);font-size:1.3rem}
+@keyframes tp{to{transform:scale(1.2)}}
+
+/* ---------- round 2 ---------- */
+.catwrap{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.cat{display:flex;flex-direction:column;gap:.7rem;padding:.9rem 1rem;border-radius:1.3rem;background:var(--card);border:2px solid var(--line);min-height:0;transition:opacity .3s}
+.cat.act{border-color:var(--blue);box-shadow:0 0 2rem rgba(56,189,248,.35)}
+.cat.off{opacity:.55}
+.cat h3{margin:0;font-size:1.3rem;font-weight:900;display:flex;gap:.6rem;align-items:center}
+.cat h3 small{font-size:.8rem;color:var(--mut);font-weight:700}
+.cat .grid4{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:.8rem}
+.cat .box .no{font-size:2.6rem;width:4.4rem;height:4.4rem}
+.cat .box .qq{position:absolute;z-index:3;left:.7rem;top:.5rem;font-size:.85rem;background:rgba(0,0,0,.4);padding:.1rem .6rem;border-radius:1rem}
+.stim{padding:.5rem 1.1rem;border-radius:1rem;background:var(--card);border:1px solid var(--line);font-size:1.12rem}
+.stim b{color:var(--yellow)}
+.seq{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2rem}
+.slot{position:relative;min-height:5.2rem;border-radius:1.1rem;border:3px dashed rgba(255,255,255,.4);background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;padding:.5rem;transition:background .15s,border-color .15s}
+.slot .num{position:absolute;top:-.9rem;left:.7rem;width:2rem;height:2rem;border-radius:50%;background:linear-gradient(135deg,var(--purple2),var(--blue2));display:grid;place-items:center;font-weight:900;font-size:1rem;border:2px solid #fff}
+.seq .slot:not(:last-child)::after{content:"▶";position:absolute;right:-1.15rem;top:50%;transform:translateY(-50%);color:var(--blue);font-size:1.1rem;z-index:3}
+.slot .fix{font-size:.82rem;font-weight:800;color:#a7f3d0;text-align:center;line-height:1.15;margin-top:.15rem}
+.slot.hasfix{flex-direction:column}
+.slot.hot,.pool.hot{background:rgba(56,189,248,.28);border-color:var(--blue)}
+.slot.filled{border-style:solid;border-color:rgba(255,255,255,.35)}
+.slot.ok{border-color:var(--green);background:rgba(52,211,153,.2);border-style:solid}
+.slot.bad{border-color:var(--red);background:rgba(251,113,133,.2);border-style:solid}
+.slot.tapme{border-color:var(--yellow);animation:turnp 1.2s infinite;--tc:var(--yellow)}
+.slot .mk{position:absolute;right:.4rem;top:-.9rem;font-size:1.3rem;background:#0b1a40;border-radius:50%;width:2rem;height:2rem;display:grid;place-items:center;z-index:4}
+.chip{display:flex;align-items:center;justify-content:center;text-align:center;min-height:3.4rem;padding:.5rem 1rem;border-radius:.9rem;font-weight:800;font-size:1.12rem;line-height:1.2;user-select:none;-webkit-user-select:none;touch-action:none;cursor:grab;
+  background:linear-gradient(160deg,#fff,#dbeafe);color:#0b1f4a;box-shadow:0 .25rem 0 #7aa2e8,0 .5rem 1rem rgba(0,0,0,.3);width:100%;transition:transform .1s}
+.chip:hover{transform:translateY(-.1rem)}
+.chip.sel{outline:.28rem solid var(--yellow);transform:scale(1.04)}
+.chip.ghostsrc{opacity:.25}
+.chip.locked{cursor:default;box-shadow:none}
+.dragghost{position:fixed;z-index:100;pointer-events:none;opacity:.95;transform:rotate(-3deg) scale(1.06);box-shadow:0 1rem 2rem rgba(0,0,0,.5)!important}
+.pool{display:flex;flex-wrap:wrap;gap:.8rem;padding:.9rem;border-radius:1.1rem;min-height:5rem;background:rgba(0,0,0,.25);border:2px dashed rgba(255,255,255,.25);align-items:stretch}
+.pool .chip{width:auto;flex:1 1 12rem;max-width:22rem}
+.pool .empty{margin:auto;color:var(--mut);font-weight:700}
+.plabel{font-size:.9rem;color:var(--mut);font-weight:700;margin:.2rem 0 .1rem}
+.pairs{display:grid;gap:.6rem}
+.bwrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:1.4rem;align-items:start}
+.bwrap.nopool{grid-template-columns:1fr}
+.bpool .pool{flex-direction:column;flex-wrap:nowrap;min-height:6rem}
+.bpool .pool .chip{max-width:none;flex:none;min-height:3.4rem}
+.pr{display:grid;grid-template-columns:minmax(0,.9fr) auto minmax(0,1.3fr);gap:.8rem;align-items:center}
+.pr .lbl{display:flex;align-items:center;gap:.7rem;padding:.4rem 1rem;border-radius:1rem;font-weight:800;font-size:1.2rem;background:linear-gradient(135deg,rgba(124,58,237,.55),rgba(37,99,235,.55));border:2px solid rgba(255,255,255,.35);min-height:3.2rem}
+.pr .lbl i{font-style:normal;flex:none;width:2rem;height:2rem;border-radius:50%;background:#fff;color:#2b2b8f;display:grid;place-items:center;font-weight:900}
+.pr .ar{font-size:1.6rem;color:var(--blue)}
+.pr .slot{min-height:3.2rem;padding:.2rem .3rem}
+.pairs .chip{min-height:2.6rem;padding:.3rem .8rem;box-shadow:0 .15rem 0 #7aa2e8;font-size:1.05rem}
+.key{padding:.7rem 1.1rem;border-radius:1rem;background:rgba(52,211,153,.13);border:1px solid rgba(52,211,153,.5);font-size:1.05rem}
+.key b{color:var(--green)}
+.key .ln{display:flex;flex-wrap:wrap;gap:.35rem .5rem;align-items:center;margin-top:.3rem}
+.key .ln span{background:rgba(255,255,255,.14);padding:.15rem .7rem;border-radius:.6rem;font-weight:700}
+
+/* ---------- round 3 ---------- */
+.cases{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:1rem}
+.cases .box{border-radius:1.5rem}
+.cases .box .no{width:6rem;height:6rem;font-size:3.6rem}
+.cases .box .lab{position:absolute;z-index:3;top:.8rem;left:0;right:0;text-align:center;font-size:1.3rem;letter-spacing:.2em}
+.cases .box.used .no{width:4.6rem;height:4.6rem;font-size:2.4rem}
+.c3{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:1rem}
+.cl{display:flex;flex-direction:column;gap:.7rem;min-height:0;overflow:auto;padding-right:.3rem}
+.casecard{padding:.8rem 1.2rem;border-radius:1.3rem;background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid var(--line)}
+.casecard h2{margin:0 0 .4rem;font-size:1.35rem;font-weight:900;color:var(--yellow)}
+.casecard .st{font-size:1.3rem;line-height:1.4;font-weight:600}
+.qbox{padding:.6rem 1.1rem;border-radius:1.1rem;background:rgba(56,189,248,.14);border:2px solid var(--blue);font-size:1.18rem;font-weight:800}
+.qbox small{display:block;font-size:.8rem;letter-spacing:.14em;color:var(--blue);margin-bottom:.2rem}
+.hintc{padding:.35rem 1rem;border-radius:.9rem;background:rgba(253,224,71,.14);border:1px dashed var(--yellow);color:#fef08a;font-weight:700;font-size:1.05rem}
+.tmr{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.4rem .7rem;border-radius:1.1rem;background:var(--card);border:2px dashed var(--purple)}
+.tmr .tl{font-weight:900;color:#e4d9ff;font-size:.9rem}
+.tmr .timer{width:3.6rem;height:3.6rem}.tmr .timer span{font-size:1.2rem}
+.rub{display:flex;flex-direction:column;gap:.45rem;padding:.7rem .9rem;border-radius:1.3rem;background:rgba(124,58,237,.16);border:2px dashed var(--purple);overflow:auto;min-height:0}
+.rub h3{margin:0;font-size:1.1rem;letter-spacing:.06em;font-weight:900;color:#e4d9ff}
+.asp{padding:.3rem .5rem .4rem;border-radius:.9rem;background:rgba(0,0,0,.22)}
+.asp .al{font-size:.85rem;font-weight:700;margin-bottom:.2rem;line-height:1.2;display:flex;justify-content:space-between;gap:.5rem}
+.asp .al b{color:var(--yellow);font-variant-numeric:tabular-nums}
+.sc4{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
+.sv{min-height:max(48px,2.3rem);border-radius:.8rem;font-weight:900;font-size:1.2rem;background:rgba(255,255,255,.12);border:2px solid var(--line)}
+.sv.on{background:linear-gradient(180deg,#a78bfa,var(--purple2));border-color:#fff;box-shadow:0 0 1rem rgba(167,139,250,.8)}
+.sv:disabled{opacity:.55}
+.sv.on:disabled{opacity:1}
+.legend{font-size:.72rem;color:var(--mut);line-height:1.25}
+.tot{display:flex;align-items:baseline;justify-content:space-between;font-weight:900;font-size:1.1rem}
+.tot b{font-size:1.9rem;color:var(--yellow)}
+.rbtns{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.rbtns .btn{font-size:.85rem;padding:.3rem .5rem;min-height:max(48px,2.7rem)}
+
+/* ---------- done / final ---------- */
+.done{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center;animation:popIn .6s}
+.done .trophy{font-size:5.5rem;line-height:1;animation:floaty 2.6s ease-in-out infinite;filter:drop-shadow(0 0 1.5rem rgba(253,224,71,.7))}
+.done h2{margin:0;font-size:3rem;font-weight:900;background:linear-gradient(90deg,var(--yellow),#fff,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.done .praise{font-size:1.5rem;font-weight:800;color:var(--yellow)}
+.rank{width:min(46rem,92%);display:grid;gap:.5rem}
+.rk{display:grid;grid-template-columns:2.4rem 9rem 1fr 4.5rem;gap:.8rem;align-items:center;font-weight:800;font-size:1.15rem}
+.rk .bar{height:1.5rem;border-radius:1rem;background:rgba(255,255,255,.12);overflow:hidden}
+.rk .bar i{display:block;height:100%;background:var(--tc);border-radius:1rem;transition:width 1s .2s;box-shadow:0 0 1rem var(--tc)}
+.rk .n{text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk .v{text-align:right;font-size:1.4rem}
+.rk .md{font-size:1.5rem}
+
+.final{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:.6rem;padding:.8rem 1.6rem 1rem}
+.final .hd{text-align:center}
+.final .hd h1{margin:0;font-size:2rem;font-weight:900;background:linear-gradient(90deg,var(--yellow),#fff 50%,var(--yellow));-webkit-background-clip:text;background-clip:text;color:transparent;animation:fadeUp .8s both}
+.final .win{margin:.2rem 0 0;font-size:1.7rem;font-weight:900;animation:fadeUp 1s .2s both}
+.final .win span{color:var(--yellow)}
+.fcols{min-height:0;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:1.4rem;align-items:center}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;align-items:end;height:100%;max-height:26rem;align-self:center}
+.pcol{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.3rem;animation:riseUp 1s both}
+.pcol.p1{animation-delay:.6s}.pcol.p2{animation-delay:.3s}.pcol.p3{animation-delay:0s}
+@keyframes riseUp{from{opacity:0;transform:translateY(5rem)}to{opacity:1;transform:none}}
+.pcol .nm{font-weight:900;font-size:1.2rem;text-align:center;line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.pcol .pt{font-weight:800;color:var(--mut);font-size:.95rem}
+.pcol .ic{font-size:2.8rem;line-height:1}
+.pcol .blk{width:100%;border-radius:1rem 1rem 0 0;background:linear-gradient(180deg,var(--tc),color-mix(in srgb,var(--tc) 45%,#071030));display:grid;place-items:start center;padding-top:.4rem;font-size:2.6rem;font-weight:900;color:var(--ti);box-shadow:0 0 2rem color-mix(in srgb,var(--tc) 55%,transparent)}
+.p1 .blk{height:13rem}.p2 .blk{height:9.5rem}.p3 .blk{height:7rem}
+.p1 .ic{font-size:3.6rem;animation:floaty 2s infinite}
+.rest4{grid-column:1/-1;text-align:center;font-weight:800;color:var(--mut);margin-top:.3rem;font-size:1.05rem}
+.rest4 span{color:#fff}
+table.rc{width:100%;border-collapse:separate;border-spacing:0 .4rem;font-variant-numeric:tabular-nums}
+table.rc th{font-size:.82rem;color:var(--mut);letter-spacing:.06em;text-align:center;padding:.2rem .4rem}
+table.rc td{background:var(--card2);padding:.55rem .6rem;text-align:center;font-weight:800;font-size:1.15rem}
+table.rc td:first-child{border-radius:.8rem 0 0 .8rem;text-align:left;border-left:.5rem solid var(--tc)}
+table.rc td:last-child{border-radius:0 .8rem .8rem 0}
+table.rc td.tt{font-size:1.4rem;color:var(--yellow)}
+table.rc td.rk0{font-size:1.4rem}
+.tiebar{padding:.5rem 1rem;border-radius:1rem;background:rgba(253,224,71,.16);border:2px solid var(--yellow);display:flex;align-items:center;gap:1rem;font-weight:800;margin-bottom:.4rem;font-size:.95rem}
+.fbtns{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+.detail{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:.7rem;padding:.9rem 1.5rem}
+.dgrid{min-height:0;overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:.9rem;align-content:start}
+.dc{border-radius:1.2rem;padding:.8rem 1rem;background:linear-gradient(160deg,color-mix(in srgb,var(--tc) 22%,#0b1a40),#0a1636);border:2px solid var(--tc)}
+.dc h3{margin:0 0 .2rem;font-size:1.2rem;display:flex;justify-content:space-between}
+.dc h3 b{color:var(--yellow)}
+.dc h4{margin:.5rem 0 .2rem;font-size:.85rem;letter-spacing:.08em;color:var(--blue)}
+.dc ul{margin:0;padding-left:1.1rem;font-size:.95rem}
+.dc .il{display:flex;flex-wrap:wrap;gap:.2rem .9rem;font-size:.95rem;font-weight:600}
+.dc .il span{white-space:nowrap}
+.dc li{margin:.1rem 0}
+.dc .g{color:var(--green)}.dc .r{color:var(--red)}
+
+/* ---------- modal / toast ---------- */
+.modal{position:fixed;inset:0;z-index:120;background:rgba(2,8,24,.78);backdrop-filter:blur(6px);display:grid;place-items:center;animation:fadeIn .2s;padding:1rem}
+@keyframes fadeIn{from{opacity:0}}
+.mbox{width:min(46rem,96vw);max-height:92vh;overflow:auto;border-radius:1.5rem;padding:1.4rem 1.6rem;background:linear-gradient(160deg,#16296a,#0a1636);border:2px solid var(--line);box-shadow:0 2rem 4rem rgba(0,0,0,.6);animation:popIn .3s}
+.mbox h2{margin:0 0 .6rem;font-size:1.6rem;font-weight:900}
+.mbox p{font-size:1.1rem;margin:.4rem 0 1rem}
+.mrow{display:flex;gap:.8rem;justify-content:flex-end;flex-wrap:wrap;margin-top:.8rem}
+.sec{margin:.8rem 0 .3rem;font-weight:900;font-size:.85rem;letter-spacing:.1em;color:var(--blue)}
+.chips{display:flex;gap:.5rem;flex-wrap:wrap}
+.tg{min-height:max(48px,2.8rem);padding:.3rem 1rem;border-radius:.8rem;font-weight:800;border:2px solid var(--tc);background:color-mix(in srgb,var(--tc) 30%,#0b1a40)}
+.tg.on{background:var(--tc);color:var(--ti)}
+.tg:disabled{opacity:.4}
+#toast{position:fixed;left:50%;bottom:7.5rem;transform:translateX(-50%) translateY(2rem);z-index:130;background:#0b1a40;border:2px solid var(--yellow);padding:.7rem 1.4rem;border-radius:1rem;font-weight:800;opacity:0;transition:.3s;pointer-events:none;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%)}
+.bq{padding:.8rem 1rem;border-radius:1rem;background:rgba(255,255,255,.09);font-size:1.2rem;font-weight:700;margin:.4rem 0}
+.hide{display:none!important}
+
+@media (max-aspect-ratio:1/1){
+  html{font-size:max(12px,min(2.4vw,1.6vh))}
+  .home{grid-template-columns:1fr;overflow:auto}
+  .art{display:none}
+  .opts,.catwrap,.c3,.fcols,.dgrid{grid-template-columns:1fr}
+  .seq{grid-template-columns:1fr 1fr}
+  .board{grid-template-columns:1fr 1fr}
+  .steps{display:none}
+}
+@media (max-height:620px){.rtitle p{display:none}.home h1{font-size:2.6rem}}
+
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  html,body{overflow:visible;height:auto;background:#fff!important;color:#000}
+  body::before,#fx,.noprint,.top .ctrls,.steps{display:none!important}
+  .final,.detail{height:auto;display:block;padding:0}
+  .final .hd h1,.final .win{background:none;-webkit-text-fill-color:#000;color:#000}
+  .final .win span{color:#000}
+  .fcols{display:block}
+  .podium{max-height:none;height:16rem;margin-bottom:1rem}
+  table.rc th{color:#333}
+  table.rc td{background:#f1f1f1;color:#000;border:1px solid #bbb}
+  table.rc td.tt{color:#000}
+  .pcol,.final .hd h1,.final .win{animation:none!important}
+  .pcol .nm,.pcol .pt{color:#000}
+  .dc{background:#fff;color:#000;border:2px solid var(--tc)}
+  .dc h3 b{color:#000}.dc h4{color:#333}
+  .dgrid{overflow:visible;grid-template-columns:1fr 1fr}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<canvas id="fx"></canvas>
+<div id="modal-root"></div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* =====================================================================
+   DATA SOAL (dari berkas SOAL.docx)
+===================================================================== */
+const D = {"r1": [{"q": "Ketika seseorang menyentuh benda panas, kulit menerima rangsangan dan mengirimkan informasi menuju sistem saraf pusat. Jenis neuron yang membawa informasi tersebut adalah ....", "opts": ["Neuron motorik yang membawa perintah ke otot", "Neuron sensorik yang membawa informasi dari reseptor", "Interneuron yang membawa perintah langsung ke kulit", "Neuron motorik yang membawa informasi menuju otak"], "key": 1, "pemb": "Neuron sensorik berfungsi menghantarkan informasi dari reseptor menuju sistem saraf pusat. Sementara itu, neuron motorik menghantarkan perintah dari sistem saraf pusat menuju efektor."}, {"q": "Bagian neuron yang berfungsi menerima sinyal dari neuron lain dan meneruskannya menuju badan sel adalah ....", "opts": ["Akson", "Selubung mielin", "Dendrit", "Ujung akson"], "key": 2, "pemb": "Dendrit merupakan bagian neuron yang umumnya berfungsi menerima sinyal dan menghantarkannya menuju badan sel. Akson menghantarkan impuls menjauhi badan sel, sedangkan mielin membantu mempercepat penghantaran impuls."}, {"q": "Saat tangan menyentuh benda yang sangat panas, tangan segera ditarik melalui gerak refleks. Bagian yang menjadi pusat pengolahan awal refleks penarikan tangan adalah ....", "opts": ["Otak besar", "Otak kecil", "Batang otak", "Sumsum tulang belakang"], "key": 3, "pemb": "Gerak refleks penarikan tangan melibatkan pusat integrasi pada sumsum tulang belakang sehingga respons berlangsung cepat. Informasi juga diteruskan menuju otak agar seseorang menyadari rangsangan yang dialami."}, {"q": "Ketika melihat tulisan di papan tulis, cahaya yang masuk ke mata diterima oleh sel peka cahaya pada bagian ....", "opts": ["Retina", "Iris", "Pupil", "Lensa"], "key": 0, "pemb": "Retina mengandung sel fotoreseptor yang menerima rangsangan cahaya dan mengubahnya menjadi sinyal saraf. Lensa membantu memfokuskan cahaya, sedangkan iris mengatur ukuran pupil."}, {"q": "Saat mendengar bel sekolah, getaran suara diubah menjadi sinyal saraf oleh sel reseptor yang terdapat pada ....", "opts": ["Gendang telinga", "Daun telinga", "Koklea", "Saluran telinga"], "key": 2, "pemb": "Koklea mengandung sel rambut yang berperan sebagai reseptor pendengaran. Sel tersebut mengubah getaran menjadi sinyal saraf yang diteruskan melalui saraf pendengaran menuju otak."}, {"q": "Ketika berpindah dari tempat gelap menuju tempat yang terang, pupil mata mengecil. Perubahan ini bertujuan untuk ....", "opts": ["Memperbanyak cahaya yang masuk ke mata", "Mengurangi cahaya yang masuk ke mata", "Menghentikan cahaya agar tidak mencapai retina", "Memperbesar bayangan yang terbentuk pada retina"], "key": 1, "pemb": "Pupil mengecil ketika menerima cahaya terang untuk mengurangi jumlah cahaya yang masuk ke mata. Respons ini merupakan bagian dari refleks pupil yang diatur oleh sistem saraf."}, {"q": "Ketika seseorang merasa takut, hormon adrenalin membantu tubuh menjadi lebih siap menghadapi bahaya. Salah satu perubahan yang dapat terjadi adalah ....", "opts": ["Detak jantung menjadi lebih lambat", "Detak jantung berhenti sesaat", "Detak jantung tetap sama", "Detak jantung menjadi lebih cepat"], "key": 3, "pemb": "Adrenalin membantu meningkatkan kesiagaan tubuh saat menghadapi ancaman, antara lain dengan meningkatkan frekuensi detak jantung."}, {"q": "Setelah makan, kadar gula darah dapat meningkat. Hormon yang membantu tubuh mengatur kadar gula darah tersebut adalah ....", "opts": ["Insulin", "Adrenalin", "Glukagon", "Melatonin"], "key": 0, "pemb": "Insulin diproduksi oleh sel beta pankreas dan membantu menurunkan kadar glukosa darah dengan meningkatkan pengambilan serta penyimpanan glukosa oleh jaringan tubuh."}, {"q": "Ketika malam hari, tubuh mulai menyesuaikan diri untuk beristirahat. Hormon yang membantu mengatur siklus tidur dan bangun adalah ....", "opts": ["Insulin", "Tiroksin", "Melatonin", "Adrenalin"], "key": 2, "pemb": "Melatonin dihasilkan oleh kelenjar pineal dan berperan dalam pengaturan ritme sirkadian, termasuk siklus tidur dan bangun."}, {"q": "Sistem saraf dan sistem hormon sama-sama membantu mengatur aktivitas tubuh. Perbedaan yang paling tepat antara keduanya adalah ....", "opts": ["Sistem saraf menggunakan darah, sedangkan sistem hormon menggunakan impuls saraf.", "Sistem saraf menyampaikan sinyal melalui neuron, sedangkan hormon terutama diedarkan melalui darah.", "Sistem saraf hanya mengatur gerak sadar, sedangkan hormon hanya mengatur gerak refleks.", "Sistem saraf bekerja tanpa otak, sedangkan hormon selalu bekerja melalui otak."], "key": 1, "pemb": "Sistem saraf menghantarkan informasi melalui impuls listrik pada neuron dan sinyal kimia pada sinaps. Sistem hormon menggunakan zat kimia yang terutama diedarkan melalui darah untuk memengaruhi sel target."}, {"q": "Ketika melihat bola datang, seorang murid segera menggerakkan tangannya untuk menangkap bola. Peran otak dalam peristiwa tersebut adalah ....", "opts": ["Menggantikan fungsi mata dalam menerima cahaya", "Menghasilkan hormon untuk menggerakkan tangan secara langsung", "Mengubah cahaya menjadi sinyal saraf di dalam retina", "Mengolah informasi visual dan mengoordinasikan gerakan tangan"], "key": 3, "pemb": "Mata menerima rangsangan cahaya dan mengirimkan informasi menuju otak. Otak kemudian mengolah informasi tersebut dan mengoordinasikan gerakan melalui jalur saraf motorik menuju otot tangan."}, {"q": "Ketika seorang murid terkejut karena mendengar suara keras, ia menoleh dan jantungnya berdebar. Peristiwa ini menunjukkan bahwa ....", "opts": ["Sistem indra menerima rangsangan, sistem saraf mengatur respons, dan sistem hormon dapat membantu kesiagaan tubuh.", "Sistem hormon menerima suara, sistem indra menggerakkan otot, dan sistem saraf mengatur darah.", "Sistem saraf menerima suara tanpa bantuan telinga, kemudian hormon langsung menggerakkan kepala.", "Sistem indra mengatur seluruh gerakan tubuh tanpa melibatkan sistem saraf."], "key": 0, "pemb": "Telinga menerima rangsangan suara yang diteruskan melalui saraf menuju otak. Sistem saraf mengatur gerakan menoleh dan respons kesiagaan. Aktivasi sistem saraf simpatis serta pelepasan hormon adrenalin dapat membantu meningkatkan detak jantung ketika seseorang terkejut."}], "A": [{"title": "Gerak Refleks Menarik Tangan", "stim": "Rani tidak sengaja menyentuh panci panas. Tangannya langsung ditarik menjauh.", "ins": "Susun komponen berikut sesuai urutan jalur gerak refleks yang benar.", "order": ["Reseptor kulit", "Saraf sensorik", "Sumsum tulang belakang", "Saraf motorik", "Otot tangan"], "pemb": "Reseptor kulit menerima rangsangan panas. Informasi diteruskan oleh saraf sensorik menuju sumsum tulang belakang. Selanjutnya, saraf motorik menghantarkan perintah menuju otot sehingga tangan segera ditarik."}, {"title": "Menangkap Bola", "stim": "Ketika bermain, seorang murid melihat bola datang ke arahnya dan segera menggerakkan tangan untuk menangkapnya.", "ins": "Susun urutan jalur penerimaan rangsangan dan respons gerakan yang tepat.", "order": ["Mata (retina)", "Saraf penglihatan", "Otak", "Saraf motorik", "Otot tangan"], "pemb": "Retina menerima rangsangan cahaya dari bola. Informasi diteruskan melalui saraf penglihatan ke otak. Otak mengolah informasi dan mengatur gerakan menangkap bola melalui saraf motorik."}, {"title": "Menoleh Ketika Dipanggil", "stim": "Seorang murid mendengar temannya memanggil dari belakang, kemudian menoleh ke arah suara tersebut.", "ins": "Susun urutan proses penerimaan rangsangan suara hingga menghasilkan gerakan menoleh.", "order": ["Reseptor pendengaran di koklea", "Saraf pendengaran", "Otak", "Saraf motorik", "Otot leher"], "pemb": "Reseptor pendengaran dalam koklea menerima rangsangan suara dan menghasilkan sinyal saraf. Informasi diteruskan menuju otak untuk diproses. Otak kemudian mengoordinasikan gerakan menoleh melalui saraf motorik menuju otot leher."}, {"title": "Menghindari Kendaraan", "stim": "Seorang murid melihat sepeda motor mendekat dan segera melangkah mundur untuk menghindarinya.", "ins": "Susun urutan jalur penerimaan rangsangan dan respons tubuh.", "order": ["Mata (retina)", "Saraf penglihatan", "Otak", "Saraf motorik", "Otot kaki"], "pemb": "Mata mendeteksi kendaraan yang mendekat. Informasi visual diteruskan ke otak. Setelah memproses informasi, otak mengoordinasikan gerakan menghindar melalui saraf motorik menuju otot kaki."}], "B": [{"title": "Bagian Neuron dan Fungsinya", "ins": "Cocokkan setiap bagian neuron dengan fungsi yang tepat.", "left": ["Dendrit", "Akson", "Selubung mielin", "Ujung akson"], "right": ["Menerima sinyal dari neuron lain", "Menghantarkan impuls menjauhi badan sel", "Membantu mempercepat penghantaran impuls", "Meneruskan sinyal ke sel berikutnya melalui sinaps"], "pemb": "Dendrit menerima sinyal, akson menghantarkan impuls menjauhi badan sel, mielin membantu mempercepat penghantaran impuls, dan ujung akson meneruskan sinyal melalui sinaps menuju sel berikutnya.", "lh": "Bagian Neuron", "rh": "Pilihan Fungsi"}, {"title": "Organ Indra dan Rangsangannya", "ins": "Cocokkan organ indra dengan jenis rangsangan yang diterimanya.", "left": ["Mata", "Telinga", "Hidung", "Kulit"], "right": ["Cahaya", "Getaran suara", "Molekul zat berbau", "Sentuhan atau tekanan"], "pemb": "Mata menerima rangsangan cahaya, telinga menerima getaran suara, hidung mendeteksi molekul zat berbau, dan kulit memiliki reseptor yang menerima berbagai rangsangan, termasuk sentuhan dan tekanan.", "lh": "Organ Indra", "rh": "Pilihan Rangsangan"}, {"title": "Hormon dan Fungsinya", "ins": "Cocokkan setiap hormon dengan fungsi yang paling tepat.", "left": ["Adrenalin", "Insulin", "Melatonin", "Hormon pertumbuhan"], "right": ["Membantu meningkatkan kesiagaan tubuh", "Membantu menurunkan kadar glukosa darah", "Membantu mengatur siklus tidur", "Membantu pertumbuhan tulang dan jaringan"], "pemb": "Adrenalin berperan dalam respons kesiagaan tubuh, insulin membantu mengatur kadar glukosa darah, melatonin membantu mengatur siklus tidur-bangun, dan hormon pertumbuhan mendukung pertumbuhan tubuh.", "lh": "Hormon", "rh": "Pilihan Fungsi"}, {"title": "Situasi dan Respons Tubuh", "ins": "Cocokkan situasi yang dialami seseorang dengan respons tubuh yang sesuai.", "left": ["Melihat cahaya sangat terang", "Menyentuh benda panas", "Mengalami ketakutan", "Mencium aroma makanan"], "right": ["Pupil mengecil", "Tangan segera ditarik", "Detak jantung meningkat", "Produksi air liur dapat meningkat"], "pemb": "Cahaya terang menyebabkan pupil mengecil, rangsangan panas dapat menimbulkan gerak refleks penarikan tangan, ketakutan dapat meningkatkan detak jantung melalui respons saraf simpatis, sedangkan aroma makanan dapat merangsang produksi air liur.", "lh": "Situasi", "rh": "Pilihan Respons Tubuh"}], "C": [{"title": "Terkejut Mendengar Suara Keras", "stim": "Saat sedang belajar, Rani mendengar suara keras dari buku yang terjatuh. Ia langsung menoleh ke arah suara tersebut dan merasakan jantungnya berdebar.", "q": "Bagaimana sistem indra, sistem saraf, dan sistem hormon bekerja sama ketika Rani terkejut?", "hint": "Jelaskan peran telinga, otak, dan adrenalin.", "kunci": "Telinga menerima rangsangan suara dan meneruskannya melalui saraf pendengaran menuju otak. Otak memproses informasi dan mengatur gerakan menoleh melalui saraf motorik. Ketika Rani terkejut, sistem saraf simpatis dapat menjadi lebih aktif, dan hormon adrenalin dapat membantu meningkatkan kesiagaan tubuh serta mempercepat detak jantung.", "pemb": "Kasus ini menunjukkan kerja sama sistem pendengaran sebagai penerima rangsangan, sistem saraf sebagai pengolah informasi dan pengatur respons, serta sistem hormon yang dapat mendukung kesiagaan tubuh saat menghadapi situasi mengejutkan."}, {"title": "Gugup Saat Presentasi", "stim": "Bima sedang melakukan presentasi di depan kelas. Ketika melihat teman-temannya memperhatikan dirinya, Bima merasa gugup. Jantungnya berdebar dan telapak tangannya berkeringat.", "q": "Mengapa tubuh Bima mengalami perubahan tersebut? Jelaskan hubungan sistem indra, saraf, dan hormon.", "hint": "Jelaskan peran mata, otak, dan adrenalin.", "kunci": "Mata Bima menerima informasi dari lingkungan dan meneruskannya melalui saraf menuju otak. Otak mengolah situasi tersebut sehingga Bima merasa gugup. Kondisi ini dapat mengaktifkan saraf simpatis dan meningkatkan pelepasan hormon adrenalin yang membantu mempercepat detak jantung. Aktivitas saraf simpatis juga dapat menyebabkan telapak tangan berkeringat.", "pemb": "Perasaan gugup menunjukkan hubungan antara pemrosesan informasi oleh otak dan perubahan fisiologis tubuh. Sistem saraf dan hormon membantu tubuh menyesuaikan diri dengan situasi yang dianggap menegangkan."}, {"title": "Menghindari Bola", "stim": "Saat bermain di lapangan, Dika melihat bola meluncur ke arah wajahnya. Ia segera menunduk untuk menghindari bola tersebut. Setelah itu, jantungnya terasa berdebar.", "q": "Bagaimana sistem indra, sistem saraf, dan sistem hormon membantu Dika merespons keadaan tersebut?", "hint": "Jelaskan peran mata, otak, otot, dan adrenalin.", "kunci": "Mata Dika menerima rangsangan cahaya dari bola yang mendekat. Informasi diteruskan melalui saraf menuju otak untuk diproses. Otak kemudian mengatur gerakan menunduk melalui saraf motorik menuju otot. Situasi berbahaya juga dapat mengaktifkan sistem saraf simpatis serta pelepasan hormon adrenalin yang membantu meningkatkan kesiagaan dan detak jantung.", "pemb": "Respons menghindari bola memperlihatkan hubungan antara sistem penglihatan yang menerima informasi, sistem saraf yang mengoordinasikan gerakan, serta sistem hormon yang dapat membantu kesiagaan tubuh saat menghadapi ancaman."}, {"title": "Mencium Aroma Makanan", "stim": "Sinta mencium aroma makanan kesukaannya dari kantin. Ia menjadi ingin makan dan mulai mengeluarkan air liur. Setelah makan, tubuhnya mengatur kadar glukosa darah agar tetap normal.", "q": "Bagaimana sistem indra, sistem saraf, dan sistem hormon berperan dalam peristiwa yang dialami Sinta?", "hint": "Jelaskan peran hidung, otak, dan insulin.", "kunci": "Hidung menerima rangsangan aroma makanan dan meneruskan informasi melalui saraf menuju otak. Otak mengolah informasi tersebut, kemudian sistem saraf otonom dapat merangsang produksi air liur. Setelah makan, hormon insulin yang dihasilkan oleh pankreas membantu mengatur kadar glukosa darah dengan meningkatkan pengambilan dan penyimpanan glukosa.", "pemb": "Kasus ini menunjukkan bahwa sistem koordinasi tidak hanya berperan dalam merespons bahaya. Sistem indra dan saraf juga berperan ketika tubuh bersiap menerima makanan, sedangkan sistem hormon membantu menjaga keseimbangan kondisi internal tubuh setelah makan."}]};
+
+/* soal tambahan penentu juara (dipandu guru) */
+const BQ = [
+  {q:'Bagian otak yang berperan mengatur keseimbangan tubuh dan koordinasi gerak otot adalah ....',a:'Otak kecil (serebelum).'},
+  {q:'Kelenjar yang sering disebut “kelenjar pengatur” karena hormonnya mengatur kelenjar lain, termasuk hormon pertumbuhan, adalah ....',a:'Kelenjar hipofisis (pituitari).'},
+  {q:'Bagian mata yang mengatur besar-kecilnya pupil sehingga jumlah cahaya yang masuk dapat diatur adalah ....',a:'Iris.'},
+  {q:'Sebutkan satu perbedaan cara kerja sistem saraf dan sistem hormon dalam menyampaikan informasi.',a:'Sistem saraf menyampaikan impuls melalui neuron dengan respons cepat; hormon diedarkan melalui darah dengan respons yang lebih lambat tetapi efeknya cenderung lebih lama.'},
+  {q:'Hormon yang dihasilkan kelenjar tiroid dan berperan mengatur laju metabolisme tubuh adalah ....',a:'Tiroksin.'}
+];
+
+/* =====================================================================
+   STATE
+===================================================================== */
+const KEY = 'coordination-challenge-v1';
+const TD = [
+  {c:'#e11d48',ink:'#ffffff'},
+  {c:'#2563eb',ink:'#ffffff'},
+  {c:'#22c55e',ink:'#04230f'},
+  {c:'#facc15',ink:'#2a1d00'}
+];
+const DEFNAMES = ['Tim Merah','Tim Biru','Tim Hijau','Tim Kuning'];
+const SEQ = [0,1,2,3,0,1,2,3,0,1,2,3];
+const MAXR = [30,20,40];
+
+function fresh(){return {v:1,page:'home',sound:true,names:DEFNAMES.slice(),r1:null,r2:null,r3:null,tb:{}};}
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&j.names&&j.names.length===4)return j;}catch(e){}return null;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+let S = load() || fresh();
+const resumed = S.page !== 'home';
+
+/* ---------- util ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc = s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const fmt = n=>(n==null?'–':(Number.isInteger(n)?String(n):String(n).replace('.',',')));
+const nm = t=>S.names[t];
+const ts = t=>`--tc:${TD[t].c};--ti:${TD[t].ink}`;
+const range = n=>Array.from({length:n},(_,i)=>i);
+
+/* ---------- skor ---------- */
+function r1Score(t){return S.r1?Object.values(S.r1.results).filter(x=>x.team===t).reduce((s,x)=>s+x.pts,0):0;}
+function r1Count(){return S.r1?Object.keys(S.r1.results).length:0;}
+function r2Part(t,c){if(!S.r2)return null;const e=Object.values(S.r2['done'+c]).find(x=>x.team===t);return e?e.score:null;}
+function r2Score(t){return (r2Part(t,'A')||0)+(r2Part(t,'B')||0);}
+function r3Case(t){return S.r3?Object.entries(S.r3.cases).find(([b,c])=>c.team===t):null;}
+function r3Score(t){const e=r3Case(t);return e&&e[1].saved?e[1].s.reduce((a,b)=>a+b,0):0;}
+function totals(t){const a=r1Score(t),b=r2Score(t),c=r3Score(t);return {r1:a,r2:b,r3:c,total:a+b+c};}
+
+function ranking(){
+  const rows=range(4).map(t=>({t,...totals(t)}));
+  const grp={};rows.forEach(r=>{(grp[r.total+'|'+r.r3]=grp[r.total+'|'+r.r3]||[]).push(r.t);});
+  rows.forEach(r=>{
+    const g=grp[r.total+'|'+r.r3];r.tieKey=g.length>1?r.total+'|'+r.r3:null;
+    const o=r.tieKey&&S.tb[r.tieKey];r.tb=o&&o.length===g.length?o.indexOf(r.t):(g.length>1?-1:0);
+  });
+  rows.sort((a,b)=>b.total-a.total||b.r3-a.r3||((a.tb<0?99:a.tb)-(b.tb<0?99:b.tb))||a.t-b.t);
+  rows.forEach(r=>{
+    const unres=r.tieKey&&r.tb<0;r.unres=!!unres;
+    r.rank=1+rows.filter(o=>o.total>r.total||(o.total===r.total&&o.r3>r.r3)||(o.total===r.total&&o.r3===r.r3&&!unres&&!o.unres&&o.tb<r.tb)).length;
+  });
+  return rows;
+}
+
+/* =====================================================================
+   AUDIO
+===================================================================== */
+let AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){}return AC;}
+function tone(f,d,type='sine',at=0,g=.18,f2=null){
+  const c=ac();if(!c)return;const t=c.currentTime+at;const o=c.createOscillator(),v=c.createGain();
+  o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  v.gain.setValueAtTime(0,t);v.gain.linearRampToValueAtTime(g,t+.02);v.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(v);v.connect(c.destination);o.start(t);o.stop(t+d+.05);
+}
+function sfx(k){
+  if(!S.sound)return;
+  try{
+  if(k==='ok'){[523,659,784,1046].forEach((f,i)=>tone(f,.28,'triangle',i*.09));}
+  else if(k==='bad'){tone(240,.5,'sawtooth',0,.14,110);tone(180,.5,'square',.05,.08,90);}
+  else if(k==='part'){tone(440,.2,'triangle',0);tone(523,.3,'triangle',.12);}
+  else if(k==='open'){tone(300,.15,'square',0,.08,700);tone(700,.2,'triangle',.1,.12);}
+  else if(k==='tick'){tone(900,.07,'square',0,.06);}
+  else if(k==='time'){tone(220,.7,'sawtooth',0,.15,160);}
+  else if(k==='round'||k==='done'){[392,523,659,784,1046].forEach((f,i)=>tone(f,.35,'triangle',i*.1,.16));}
+  else if(k==='start'){[330,415,523,659].forEach((f,i)=>tone(f,.3,'triangle',i*.1,.15));}
+  else if(k==='win'){[523,523,523,659,587,659,784,1046,784,1046,1318].forEach((f,i)=>tone(f,.32,'triangle',i*.13,.17));}
+  else if(k==='tap'){tone(600,.05,'sine',0,.07);}
+  }catch(e){}
+}
+
+/* =====================================================================
+   CONFETTI
+===================================================================== */
+const fx=$('#fx'),fxc=fx.getContext('2d');let parts=[],raf=0;
+function sizeFx(){fx.width=innerWidth;fx.height=innerHeight;}addEventListener('resize',sizeFx);sizeFx();
+function confetti(n=140,big=false){
+  const cols=['#e11d48','#2563eb','#22c55e','#facc15','#a78bfa','#38bdf8','#fff'];
+  for(let i=0;i<n;i++)parts.push({x:Math.random()*fx.width,y:-20-Math.random()*fx.height*.4,vx:(Math.random()-.5)*5,vy:2+Math.random()*5,w:8+Math.random()*10,h:5+Math.random()*8,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[(Math.random()*cols.length)|0],life:big?420:260});
+  if(!raf)raf=requestAnimationFrame(stepFx);
+}
+function stepFx(){
+  fxc.clearRect(0,0,fx.width,fx.height);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.r+=p.vr;p.life--;fxc.save();fxc.translate(p.x,p.y);fxc.rotate(p.r);fxc.globalAlpha=Math.min(1,p.life/40);fxc.fillStyle=p.c;fxc.fillRect(-p.w/2,-p.h/2,p.w,p.h);fxc.restore();});
+  parts=parts.filter(p=>p.life>0&&p.y<fx.height+30);
+  if(parts.length)raf=requestAnimationFrame(stepFx);else{raf=0;fxc.clearRect(0,0,fx.width,fx.height);}
+}
+
+/* =====================================================================
+   UI HELPERS
+===================================================================== */
+let lastPage=null,anim=null;
+function commit(){save();render();}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),2600);}
+function modal(html){$('#modal-root').innerHTML=`<div class="modal" data-act="mbg"><div class="mbox">${html}</div></div>`;}
+function closeModal(){$('#modal-root').innerHTML='';}
+function confirmBox(title,msg,yes,fn,cls='danger'){
+  modal(`<h2>${title}</h2><p>${msg}</p><div class="mrow"><button class="btn ghost" data-act="closeModal">Batal</button><button class="btn ${cls}" data-act="confirmYes">${yes}</button></div>`);
+  confirmBox.fn=fn;
+}
+function fs(){try{const d=document.documentElement;if(!document.fullscreenElement&&d.requestFullscreen)d.requestFullscreen().catch(()=>{});}catch(e){}}
+function toggleFs(){try{if(document.fullscreenElement)document.exitFullscreen();else fs();}catch(e){}}
+
+const TITLES = {
+  r1:['RONDE 1 — KNOWLEDGE BATTLE','Pilih Kotak, Jawab Tantangan!'],
+  r2:['RONDE 2 — NEURAL CONNECTION','Seret, Susun, dan Cocokkan Konsep!'],
+  r3:['RONDE 3 — COORDINATION CASE SOLVER','Analisis Kasus, Hubungkan Tiga Sistem!']
+};
+function stepsHTML(){
+  const pg=S.page;const idx={r1:1,r2:2,r3:3,final:4,detail:4}[pg];
+  const st=['Ronde 1','Ronde 2','Ronde 3','Hasil'];
+  return `<div class="steps">${st.map((s,i)=>`<span class="stp ${i+1===idx?'on':(i+1<idx?'ok':'')}">${i+1<idx?'✓ ':''}${s}</span>`).join('')}</div>`;
+}
+function ctrlsHTML(){
+  return `<div class="ctrls noprint"><button class="ibtn" data-act="sound" title="Suara" aria-label="Suara">${S.sound?'🔊':'🔇'}</button><button class="ibtn" data-act="fs" title="Layar penuh" aria-label="Layar penuh">⛶</button><button class="tbtn" data-act="teacher">🔒 Panel Guru</button></div>`;
+}
+function topHTML(pg){
+  const t=TITLES[pg];
+  return `<header class="top"><div class="brand"><div class="logo">🧠</div><div><b>COORDINATION</b><small>CHALLENGE · IPA IX</small></div></div>
+  <div class="rtitle"><h1>${t[0]}</h1><p>${t[1]}</p></div>${stepsHTML()}${ctrlsHTML()}</header>`;
+}
+function boardHTML(mode){
+  let turnT=-1;
+  if(mode==='r1'&&S.r1.view==='play')turnT=S.r1.active?S.r1.active.team:SEQ[Math.min(r1Count(),11)];
+  if(mode==='r2'&&S.r2.view==='play')turnT=S.r2.active?S.r2.active.team:S.r2.turn;
+  if(mode==='r3'&&S.r3.view==='play'){const u=Object.values(S.r3.cases).find(c=>!c.saved);turnT=u?u.team:(S.r3.turn==null?-1:S.r3.turn);}
+  return `<footer class="board">${range(4).map(t=>{
+    let sc,sub;
+    if(mode==='r1'){const n=Object.values(S.r1.results).filter(x=>x.team===t).length;sc=`${fmt(r1Score(t))}<small> /30</small>`;sub=`Soal: ${'●'.repeat(n)}${'○'.repeat(3-n)}`;}
+    else if(mode==='r2'){const a=r2Part(t,'A'),b=r2Part(t,'B');sc=`${fmt(r2Score(t))}<small> /20</small>`;sub=`Urutan ${fmt(a)} · Cocok ${fmt(b)}`;}
+    else{const e=r3Case(t);sc=`${fmt(r3Score(t))}<small> /40</small>`;sub=e?(e[1].saved?`Kasus ${S.r3.map[+e[0]]+1} · dinilai ✓`:`Kasus ${S.r3.map[+e[0]]+1} · belum dinilai`):'Menunggu giliran';}
+    return `<div class="bt ${turnT===t?'turn':''}" style="${ts(t)}">${turnT===t?'<span class="tag">GILIRAN</span>':''}<div class="tdot">${nm(t).trim().charAt(0).toUpperCase()}</div><div style="min-width:0"><div class="nm">${esc(nm(t))}</div><div class="sb">${sub}</div></div><div class="sc" data-sc="${mode}${t}">${sc}</div></div>`;
+  }).join('')}</footer>`;
+}
+function shell(pg,main,mode){return `<div class="stage ${lastPage!==pg?'enter':''}">${topHTML(pg)}<main class="main">${main}</main>${boardHTML(mode)}</div>`;}
+
+/* timer */
+function timerHTML(total,off){return `<div class="timer ${off?'off':''}" id="timer" data-total="${total}"><svg viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="44"/><circle class="fg" id="tfg" cx="50" cy="50" r="44"/></svg><span id="tnum">${off?'—':Math.ceil(total)}</span></div>`;}
+function fmtT(s){s=Math.ceil(s);return s>=60?`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:String(s);}
+function setTimerUI(rem,total){
+  const t=$('#timer');if(!t)return;
+  const fg=$('#tfg'),n=$('#tnum');
+  fg.style.strokeDashoffset=(276.5*(1-Math.max(0,rem)/total)).toFixed(1);
+  n.textContent=fmtT(rem);
+  t.classList.toggle('warn',rem<=5&&rem>0);t.classList.toggle('mid',rem>5&&rem<=total*.4);
+}
+let lastTickSec=-1;
+function curTimer(){
+  if(S.page==='r1'&&S.r1.active&&!S.r1.active.locked)return {dl:S.r1.active.deadline,total:20,end:()=>r1Lock(null,true)};
+  if(S.page==='r2'&&S.r2.active&&!S.r2.active.locked)return {dl:S.r2.active.deadline,total:90,end:()=>r2Check(true)};
+  if(S.page==='r3'&&S.r3.timer&&!S.r3.timer.ended)return {dl:S.r3.timer.deadline,total:S.r3.timer.total,end:()=>{S.r3.timer.ended=true;save();sfx('time');const tm=$('#timer');if(tm){tm.classList.add('warn');$('#tnum').textContent='0';}toast('⏰ Waktu habis!');}};
+  return null;
+}
+function tick(){
+  const c=curTimer();if(!c)return;
+  const rem=Math.max(0,(c.dl-Date.now())/1000);
+  setTimerUI(rem,c.total);
+  const s=Math.ceil(rem);
+  if(rem>0&&rem<=5&&s!==lastTickSec){lastTickSec=s;sfx('tick');}
+  if(rem<=0)c.end();
+}
+setInterval(tick,200);
+
+/* =====================================================================
+   RENDER
+===================================================================== */
+function render(){
+  const app=$('#app');
+  const pg=S.page;let html='';
+  if(pg==='home')html=homeHTML();
+  else if(pg==='r1')html=shell('r1',r1HTML(),'r1');
+  else if(pg==='r2')html=shell('r2',r2HTML(),'r2');
+  else if(pg==='r3')html=shell('r3',r3HTML(),'r3');
+  else if(pg==='final')html=finalHTML();
+  else if(pg==='detail')html=detailHTML();
+  const anim0=anim;app.innerHTML=html;lastPage=pg;anim=null;
+  if(anim0==='reveal'){const cl=$('.cl');if(cl)cl.scrollTo({top:cl.scrollHeight,behavior:'smooth'});}
+  tick();
+}
+
+/* ---------- HOME ---------- */
+function artSVG(){
+  return `<svg viewBox="0 0 640 540" aria-hidden="true">
+  <defs>
+    <radialGradient id="gb" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#f0abfc"/><stop offset=".55" stop-color="#a78bfa"/><stop offset="1" stop-color="#6d28d9"/></radialGradient>
+    <radialGradient id="gc" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#2563eb"/></radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#38bdf8" stop-opacity=".45"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient>
+  </defs>
+  <circle cx="320" cy="250" r="250" fill="url(#halo)"/>
+  <g stroke="#7dd3fc" stroke-width="2.5" fill="none" opacity=".75" class="dash">
+    <path d="M320 250 L110 110"/><path d="M320 250 L540 90"/><path d="M320 250 L70 330"/><path d="M320 250 L575 340"/><path d="M320 250 L190 470"/><path d="M320 250 L470 480"/>
+    <path d="M110 110 L70 330"/><path d="M540 90 L575 340"/><path d="M190 470 L470 480"/>
+  </g>
+  <g fill="#fde047">
+    <circle class="nodep" cx="110" cy="110" r="9"/><circle class="nodep" style="animation-delay:.4s" cx="540" cy="90" r="9"/><circle class="nodep" style="animation-delay:.8s" cx="70" cy="330" r="9"/>
+    <circle class="nodep" style="animation-delay:1.2s" cx="575" cy="340" r="9"/><circle class="nodep" style="animation-delay:1.6s" cx="190" cy="470" r="9"/><circle class="nodep" style="animation-delay:2s" cx="470" cy="480" r="9"/>
+  </g>
+  <circle r="6" fill="#fff"><animateMotion dur="2.8s" repeatCount="indefinite" path="M110 110 L320 250"/></circle>
+  <circle r="6" fill="#fff"><animateMotion dur="3.4s" repeatCount="indefinite" path="M320 250 L540 90"/></circle>
+  <circle r="6" fill="#fff"><animateMotion dur="3.1s" repeatCount="indefinite" path="M575 340 L320 250"/></circle>
+  <circle r="6" fill="#fde047"><animateMotion dur="3.7s" repeatCount="indefinite" path="M320 250 L190 470"/></circle>
+  <g class="glowpulse">
+    <ellipse cx="400" cy="318" rx="46" ry="34" fill="url(#gc)" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>
+    <path d="M385 330 Q400 340 415 330 M380 316 Q400 328 424 316" stroke="#fff" stroke-opacity=".5" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <rect x="334" y="316" width="30" height="64" rx="14" fill="#7c3aed" stroke="#fff" stroke-opacity=".4" stroke-width="3"/>
+    <g fill="url(#gb)" stroke="#fff" stroke-opacity=".55" stroke-width="3">
+      <circle cx="240" cy="235" r="62"/><circle cx="300" cy="185" r="66"/><circle cx="378" cy="196" r="62"/><circle cx="410" cy="255" r="56"/><circle cx="345" cy="285" r="58"/><circle cx="270" cy="288" r="52"/><circle cx="320" cy="238" r="64"/>
+    </g>
+    <g fill="url(#gb)"><circle cx="240" cy="235" r="60"/><circle cx="300" cy="185" r="64"/><circle cx="378" cy="196" r="60"/><circle cx="410" cy="255" r="54"/><circle cx="345" cy="285" r="56"/><circle cx="270" cy="288" r="50"/><circle cx="320" cy="238" r="62"/></g>
+    <g fill="none" stroke="#fff" stroke-opacity=".42" stroke-width="5" stroke-linecap="round">
+      <path d="M215 225 Q245 190 280 215 T330 195"/><path d="M260 275 Q290 245 320 275 T385 255"/><path d="M300 160 Q330 190 360 165"/><path d="M370 225 Q400 205 425 235"/><path d="M230 262 Q250 290 285 300"/><path d="M335 305 Q360 290 390 292"/>
+    </g>
+  </g>
+  </svg>`;
+}
+function homeHTML(){
+  return `<div class="stage ${lastPage!=='home'?'enter':''}" style="grid-template-rows:minmax(0,1fr);padding:0">
+  <div class="home">
+   <section class="l">
+    <div class="eyebrow fu">🧬 IPA KELAS IX · SISTEM KOORDINASI</div>
+    <div class="fu" style="animation-delay:.1s"><h1>COORDINATION<br>CHALLENGE</h1></div>
+    <h2 class="fu" style="animation-delay:.25s">Misi Integrasi Sistem Koordinasi</h2>
+    <div class="pills fu" style="animation-delay:.35s"><span class="pill a">🧠 Sistem Saraf</span><span class="pill b">👁️ Sistem Indra</span><span class="pill c">🧪 Sistem Hormon</span></div>
+    <div class="tcards">${range(4).map(t=>`<div class="tcard" style="${ts(t)};animation-delay:${.45+t*.1}s"><small>Ketuk nama untuk mengubah</small><div class="tt"><div class="tdot">${t+1}</div><input class="tname" data-i="${t}" maxlength="18" value="${esc(S.names[t])}" aria-label="Nama tim ${t+1}" autocomplete="off"></div></div>`).join('')}</div>
+    <div class="startrow fu" style="animation-delay:.9s"><button class="btn go big" data-act="start">▶ MULAI PERMAINAN</button>
+     <div class="facts"><span><b>3</b><br>Ronde</span><span><b>4</b><br>Tim</span><span><b>90</b><br>Poin maks.</span></div></div>
+    <div class="noprint" style="display:flex;gap:.6rem"><button class="ibtn" data-act="sound" aria-label="Suara">${S.sound?'🔊':'🔇'}</button><button class="ibtn" data-act="fs" aria-label="Layar penuh">⛶</button></div>
+   </section>
+   <section class="art fu" style="animation-delay:.3s">${artSVG()}
+     <div class="orb" style="left:2%;top:6%"><span>👁️</span><small>INDRA</small></div>
+     <div class="orb" style="right:3%;top:2%;animation-delay:1s"><span>⚡</span><small>NEURON</small></div>
+     <div class="orb" style="left:-2%;top:52%;animation-delay:2s"><span>👂</span><small>PENDENGARAN</small></div>
+     <div class="orb" style="right:-2%;top:58%;animation-delay:.5s"><span>🧪</span><small>HORMON</small></div>
+     <div class="orb" style="left:24%;bottom:2%;animation-delay:1.5s"><span>🖐️</span><small>PERABA</small></div>
+     <div class="orb" style="right:22%;bottom:0%;animation-delay:2.5s"><span>👃</span><small>PENCIUMAN</small></div>
+   </section>
+  </div></div>`;
+}
+
+/* ---------- RONDE 1 ---------- */
+function topNames(scores){
+  const mx=Math.max(...scores);const ts_=range(4).filter(t=>scores[t]===mx);
+  return {mx,list:ts_};
+}
+function doneHTML(o){
+  const sc=range(4).map(o.score);const mx=Math.max(...sc,1);const tn=topNames(sc);
+  const order=range(4).sort((a,b)=>sc[b]-sc[a]||a-b);
+  const medal=t=>tn.mx>0&&sc[t]===tn.mx?'🏆':'';
+  return `<div class="done"><div class="trophy">${o.icon||'🏆'}</div><h2>${o.title}</h2>
+  <div class="praise">${tn.mx>0?`🎉 Apresiasi untuk ${tn.list.map(t=>esc(nm(t))).join(' & ')}${tn.list.length>1?' (seri)':''} — skor tertinggi ${o.name}: ${fmt(tn.mx)} poin!`:'Semua tim sudah berjuang. Tetap semangat!'}</div>
+  <div class="rank">${order.map(t=>`<div class="rk" style="${ts(t)}"><span class="md">${medal(t)}</span><span class="n">${esc(nm(t))}</span><div class="bar"><i style="width:${sc[t]/o.max*100}%"></i></div><span class="v">${fmt(sc[t])}</span></div>`).join('')}</div>
+  <div class="rowend" style="justify-content:center;margin-top:.4rem">${o.extra||''}<button class="btn go big" data-act="${o.act}">${o.btn} ▶</button></div></div>`;
+}
+function r1HTML(){
+  const r=S.r1;
+  if(r.view==='done')return doneHTML({title:'RONDE 1 SELESAI!',score:r1Score,max:30,name:'Ronde 1',act:'toR2',btn:'LANJUT KE RONDE 2'});
+  if(r.active)return r1Question();
+  const t=SEQ[Math.min(r1Count(),11)],n=r1Count();
+  return `<div class="turnbar" style="${ts(t)}"><div class="who">Giliran: <span>${esc(nm(t))}</span></div><div class="hint">Pilih satu kotak yang belum dibuka!</div>
+   <div class="prog">Soal selesai: ${n} / 12<div class="pbar"><i style="width:${n/12*100}%"></i></div></div></div>
+   <div class="grid12">${range(12).map(b=>{
+     const x=r.results[b];
+     if(x)return `<button class="box used" disabled style="${ts(x.team)}"><div class="no">${b+1}</div><div class="res"><b>${esc(nm(x.team))} · ${x.ok?'✓ +10':(x.timeout?'⏰ 0':'✗ 0')}</b></div></button>`;
+     return `<button class="box" data-act="openBox" data-b="${b}" style="animation-delay:${b*.04}s" aria-label="Kotak soal ${b+1}"><div class="no">${b+1}</div><span class="q">?</span></button>`;
+   }).join('')}</div>`;
+}
+function r1Question(){
+  const r=S.r1,a=r.active,q=D.r1[r.map[a.box]];
+  let verdict='',pemb='',next='';
+  if(a.locked){
+    verdict=a.ok?`<div class="verdict ok">✅ BENAR! Jawaban tepat.<span class="pts">+10 poin</span></div>`:
+      (a.timeout?`<div class="verdict bad">⏰ WAKTU HABIS!<span class="pts">0 poin</span></div>`:`<div class="verdict bad">❌ SALAH.<span class="pts">0 poin</span></div>`);
+    pemb=`<div class="pemb"><span class="ans">Jawaban benar: ${'ABCD'[q.key]}. ${esc(q.opts[q.key])}</span><b>Pembahasan:</b> ${esc(q.pemb)}</div>`;
+    next=`<button class="btn go big" data-act="r1Next">LANJUT ▶</button>`;
+  }
+  return `<div class="qwrap ${anim==='open'?'pop':''} ${a.locked?'fb':''}" style="${ts(a.team)}">
+   <div class="qhead"><span class="badge">${esc(nm(a.team))}</span><span class="badge n">Kotak ${a.box+1}</span><span class="badge n">Soal ${r1Count()+(a.locked?0:1)} / 12</span><div class="grow"></div>${a.locked?'':timerHTML(20)}</div>
+   <div class="qscroll"><div class="qtext">${esc(q.q)}</div>
+   <div class="opts">${q.opts.map((o,i)=>{
+     let c='';if(a.locked){if(i===q.key)c='right';else if(i===a.pick)c='wrong';else c='dim';}
+     return `<button class="opt ${c}" data-act="r1Pick" data-i="${i}" ${a.locked?'disabled':''}><span class="lt">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`;}).join('')}</div>
+   ${verdict}${pemb}</div>${next?`<div class="qfoot">${next}</div>`:''}</div>`;
+}
+const A_ = {
+  toR2(){S.r2=S.r2||{mapA:shuffle(range(4)),mapB:shuffle(range(4)),turn:0,doneA:{},doneB:{},active:null,view:'play'};S.page='r2';sfx('round');commit();},
+  toR3(){S.r3=S.r3||{map:shuffle(range(4)),turn:0,cases:{},active:null,timer:null,view:'play'};S.page='r3';sfx('round');commit();},
+  toFinal(){S.page='final';sfx('win');commit();setTimeout(()=>confetti(220,true),400);setTimeout(()=>confetti(160,true),1800);},
+  openBox(el){const b=+el.dataset.b,r=S.r1;if(r.active||r.results[b]||r.view!=='play')return;
+    r.active={box:b,team:SEQ[r1Count()],deadline:Date.now()+20000,locked:false,pick:null,ok:false,timeout:false};anim='open';sfx('open');lastTickSec=-1;commit();},
+  r1Pick(el){const a=S.r1.active;if(!a||a.locked)return;r1Lock(+el.dataset.i,false);},
+  r1Next(){const r=S.r1;r.active=null;if(r1Count()>=12){r.view='done';sfx('done');confetti();}commit();}
+};
+function r1Lock(pick,timeout){
+  const r=S.r1,a=r.active;if(!a||a.locked)return;
+  const qi=r.map[a.box],q=D.r1[qi];
+  a.locked=true;a.pick=pick;a.timeout=!!timeout;a.ok=(pick===q.key);
+  r.results[a.box]={team:a.team,q:qi,pick,ok:a.ok,timeout:!!timeout,pts:a.ok?10:0};
+  sfx(a.ok?'ok':(timeout?'time':'bad'));
+  if(a.ok)confetti(50);
+  commit();
+}
+
+/* ---------- RONDE 2 ---------- */
+const r2has=(c,t)=>Object.values(S.r2['done'+c]).some(x=>x.team===t);
+const r2Phase=t=>r2has('A',t)?'B':'A';
+function r2Q(a){return a.cat==='A'?D.A[S.r2.mapA[a.box]]:D.B[S.r2.mapB[a.box]];}
+function r2HTML(){
+  const r=S.r2;
+  if(r.view==='done')return doneHTML({title:'RONDE 2 SELESAI!',score:r2Score,max:20,name:'Ronde 2',act:'toR3',btn:'LANJUT KE RONDE 3',icon:'🔗'});
+  if(r.active)return r2Work();
+  const t=r.turn,ph=r2Phase(t);
+  const done=Object.keys(r.doneA).length+Object.keys(r.doneB).length;
+  const grid=(c)=>`<div class="grid4">${range(4).map(b=>{
+    const x=r['done'+c][b];
+    if(x)return `<button class="box used" disabled style="${ts(x.team)}"><div class="no">${b+1}</div><div class="res"><b>${esc(nm(x.team))} · ${fmt(x.score)}</b></div></button>`;
+    const en=ph===c;
+    return `<button class="box" ${en?'':'disabled'} data-act="r2Open" data-c="${c}" data-b="${b}" style="${en?'':'filter:grayscale(.7) brightness(.7)'}"><div class="no">${b+1}</div><span class="q">?</span></button>`;}).join('')}</div>`;
+  return `<div class="turnbar" style="${ts(t)}"><div class="who">Giliran: <span>${esc(nm(t))}</span></div><div class="hint">${ph==='A'?'Langkah 1: pilih satu kotak Kategori A (Menyusun Urutan).':'Langkah 2: pilih satu kotak Kategori B (Mencocokkan Komponen).'}</div>
+   <div class="prog">Tantangan selesai: ${done} / 8<div class="pbar"><i style="width:${done/8*100}%"></i></div></div></div>
+   <div class="catwrap"><div class="cat ${ph==='A'?'act':'off'}"><h3>🔢 KATEGORI A <small>Menyusun Urutan · maks. 10 poin</small></h3>${grid('A')}</div>
+   <div class="cat ${ph==='B'?'act':'off'}"><h3>🧩 KATEGORI B <small>Mencocokkan Komponen · maks. 10 poin</small></h3>${grid('B')}</div></div>`;
+}
+let sel=null; /* pilihan ketuk {idx, from} */
+function chipEl(i,text,from,a,extra=''){return `<div class="chip ${extra} ${sel&&sel.idx===i&&!a.locked?'sel':''} ${a.locked?'locked':''}" data-chip="${i}" data-from="${from}">${esc(text)}</div>`;}
+function r2Work(){
+  const r=S.r2,a=r.active,q=r2Q(a),isA=a.cat==='A';
+  const items=isA?q.order:q.right;const n=items.length;
+  const pool=a.order.filter(i=>!a.placed.includes(i));
+  let slots='';
+  const slotHTML=(s)=>{
+    const v=a.placed[s];let cls='slot';
+    if(v!=null)cls+=' filled';
+    if(a.locked)cls+=v===s?' ok':' bad hasfix';
+    else if(sel&&v==null)cls+=' tapme';
+    return `<div class="${cls}" data-slot="${s}">${isA?`<span class="num">${s+1}</span>`:''}${v!=null?chipEl(v,items[v],s,a):''}${a.locked&&v!==s?`<div class="fix">✔ Seharusnya: ${esc(items[s])}</div>`:''}${a.locked?`<span class="mk">${v===s?'✅':'❌'}</span>`:''}</div>`;
+  };
+  if(isA)slots=`<div class="seq">${range(n).map(slotHTML).join('')}</div>`;
+  else slots=`<div class="pairs">${range(n).map(s=>`<div class="pr"><div class="lbl"><i>${'ABCD'[s]}</i>${esc(q.left[s])}</div><div class="ar">⟶</div>${slotHTML(s)}</div>`).join('')}</div>`;
+  const per=isA?2:2.5;
+  let result='',nextb='';
+  if(a.locked){
+    const c=a.correct;
+    result=`<div class="verdict ${c===n?'ok':(c>0?'mid':'bad')}">${a.timeout?'⏰ WAKTU HABIS — ':''}${c===n?'🎉 SEMPURNA!':(c>0?'👍 Sebagian benar':'❌ Belum tepat')} · ${c} dari ${n} ${isA?'posisi':'pasangan'} benar<span class="pts">+${fmt(a.score)} poin</span></div>
+    ${isA?`<div class="key"><b>Urutan yang benar:</b><div class="ln">${q.order.map((o,i)=>`<span>${i+1}. ${esc(o)}</span>`).join('<em>→</em>')}</div></div>`:''}
+    <div class="pemb"><b>Pembahasan:</b> ${esc(q.pemb)}</div>`;
+    nextb=`<button class="btn go big" data-act="r2Next">${a.cat==='A'?`LANJUT KE KATEGORI B ▶`:`${S.r2.turn!=null&&[0,1,2,3].filter(t=>!(r2has('A',t)&&r2has('B',t))).length?'LANJUT KE TIM BERIKUTNYA':'SELESAI'} ▶`}</button>`;
+  }
+  const poolHTML=a.locked?'':`<div class="plabel">Komponen — seret ke kotak jawaban, atau ketuk komponen lalu ketuk kotak tujuan.</div>
+    <div class="pool" data-pool="1">${pool.length?pool.map(i=>chipEl(i,items[i],'pool',a)).join(''):'<div class="empty">Semua komponen sudah ditempatkan ✔</div>'}</div>`;
+  const foot=a.locked?nextb:`<button class="btn ghost" data-act="r2Reset">↺ RESET SUSUNAN</button><button class="btn go big" data-act="r2Check">✔ CEK JAWABAN</button>`;
+  return `<div class="work ${anim==='open'?'pop':''}" style="${ts(a.team)}">
+   <div class="qhead"><span class="badge">${esc(nm(a.team))}</span><span class="badge n">Kategori ${a.cat} · Kotak ${a.box+1}</span><span class="badge n">${isA?'Menyusun Urutan':'Mencocokkan'}: ${esc(q.title)}</span><div class="grow"></div>${a.locked?'':timerHTML(90)}</div>
+   <div class="qscroll">${isA?`<div class="stim"><b>Situasi:</b> ${esc(q.stim)}</div>`:''}
+   <div class="stim ${a.locked?'hide':''}" style="background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.5)"><b style="color:var(--blue)">Tugas:</b> ${esc(q.ins)} <span style="color:var(--mut)">(${isA?'2 poin per posisi benar':'2,5 poin per pasangan benar'})</span></div>
+   ${isA?`<div class="plabel">Urutan jalur (kiri → kanan):</div>${slots}${poolHTML}`:`<div class="bwrap"><div><div class="plabel">${esc(q.lh)} → ${esc(q.rh)}</div>${slots}</div><div class="bpool">${a.locked?result:poolHTML}</div></div>`}
+   ${isA?result:''}</div><div class="qfoot">${foot}</div></div>`;
+}
+A_.r2Open=function(el){
+  const r=S.r2,c=el.dataset.c,b=+el.dataset.b;
+  if(r.active||r.view!=='play'||r['done'+c][b]||c!==r2Phase(r.turn))return;
+  const n=c==='A'?5:4;let order;do{order=shuffle(range(n));}while(order.every((v,i)=>v===i));
+  r.active={cat:c,box:b,team:r.turn,deadline:Date.now()+90000,placed:Array(n).fill(null),order,locked:false};
+  sel=null;anim='open';sfx('open');lastTickSec=-1;commit();
+};
+A_.r2Reset=function(){const a=S.r2.active;if(!a||a.locked)return;a.placed=a.placed.map(()=>null);sel=null;sfx('tap');commit();};
+A_.r2Check=function(){
+  const a=S.r2.active;if(!a||a.locked)return;
+  if(a.placed.some(v=>v==null)){confirmBox('Masih ada kotak kosong','Beberapa komponen belum ditempatkan. Jawaban tetap diperiksa dan nilai parsial akan dihitung. Lanjutkan?','Ya, periksa',()=>r2Check(false),'go');return;}
+  r2Check(false);
+};
+function r2Check(timeout){
+  const r=S.r2,a=r.active;if(!a||a.locked)return;closeModal();
+  const n=a.placed.length,per=a.cat==='A'?2:2.5;let c=0;a.placed.forEach((v,i)=>{if(v===i)c++;});
+  a.correct=c;a.score=c*per;a.locked=true;a.timeout=!!timeout;sel=null;
+  r['done'+a.cat][a.box]={team:a.team,score:a.score,correct:c,q:a.cat==='A'?r.mapA[a.box]:r.mapB[a.box],timeout:!!timeout};
+  sfx(c===n?'ok':(c>0?'part':'bad'));if(c===n)confetti(70);
+  commit();
+}
+A_.r2Next=function(){
+  const r=S.r2,a=r.active;r.active=null;sel=null;
+  if(a.cat==='B'){
+    const nx=[1,2,3,4].map(k=>(r.turn+k)%4).find(t=>!(r2has('A',t)&&r2has('B',t)));
+    if(nx===undefined){r.view='done';sfx('done');confetti();}else r.turn=nx;
+  }
+  commit();
+};
+
+/* ---- drag & drop (pointer events: mouse + sentuh) ---- */
+let drag=null,lastDragEnd=0;
+function placeChip(idx,from,target){
+  const a=S.r2.active;if(!a||a.locked)return;
+  if(target==='pool'){if(from!=='pool')a.placed[+from]=null;}
+  else if(target!=null&&target!==''){
+    const s=+target,occ=a.placed[s];
+    if(from!=='pool')a.placed[+from]=occ;
+    a.placed[s]=idx;
+  }
+  sel=null;sfx('tap');commit();
+}
+document.addEventListener('pointerdown',e=>{
+  const chip=e.target.closest('.chip');
+  if(!chip||S.page!=='r2'||!S.r2.active||S.r2.active.locked||e.button>0)return;
+  const r=chip.getBoundingClientRect();
+  drag={chip,idx:+chip.dataset.chip,from:chip.dataset.from,sx:e.clientX,sy:e.clientY,ox:e.clientX-r.left,oy:e.clientY-r.top,w:r.width,moved:false,ghost:null,id:e.pointerId};
+});
+document.addEventListener('pointermove',e=>{
+  if(!drag||e.pointerId!==drag.id)return;
+  if(!drag.moved){if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<9)return;
+    drag.moved=true;const g=drag.chip.cloneNode(true);g.classList.add('dragghost');g.style.width=drag.w+'px';document.body.appendChild(g);drag.ghost=g;drag.chip.classList.add('ghostsrc');}
+  e.preventDefault();
+  drag.ghost.style.left=(e.clientX-drag.ox)+'px';drag.ghost.style.top=(e.clientY-drag.oy)+'px';
+  $$('.hot').forEach(x=>x.classList.remove('hot'));
+  const sc=$('.qscroll');if(sc){const b=sc.getBoundingClientRect();if(e.clientY>b.bottom-70)sc.scrollTop+=18;else if(e.clientY<b.top+70)sc.scrollTop-=18;}
+  const t=document.elementFromPoint(e.clientX,e.clientY);const z=t&&t.closest('[data-slot],[data-pool]');if(z)z.classList.add('hot');
+},{passive:false});
+function endDrag(e,cancel){
+  if(!drag||(e&&e.pointerId!==drag.id))return;
+  const d=drag;drag=null;
+  if(d.ghost)d.ghost.remove();$$('.hot').forEach(x=>x.classList.remove('hot'));
+  if(!d.moved)return;
+  lastDragEnd=Date.now();
+  if(cancel)return commit();
+  const t=document.elementFromPoint(e.clientX,e.clientY);const z=t&&t.closest('[data-slot],[data-pool]');
+  if(!z)return commit();
+  placeChip(d.idx,d.from,z.dataset.pool?'pool':z.dataset.slot);
+}
+document.addEventListener('pointerup',e=>endDrag(e,false));
+document.addEventListener('pointercancel',e=>endDrag(e,true));
+/* ketuk-lalu-ketuk (alternatif) */
+function tapChip(chip){
+  const a=S.r2.active;if(!a||a.locked)return;
+  const idx=+chip.dataset.chip,from=chip.dataset.from;
+  if(!sel){sel={idx,from};sfx('tap');return commit();}
+  if(sel.idx===idx){sel=null;return commit();}
+  if(from==='pool'){ if(sel.from!=='pool')return placeChip(sel.idx,sel.from,'pool'); sel={idx,from};return commit(); }
+  placeChip(sel.idx,sel.from,from);
+}
+document.addEventListener('click',e=>{
+  if(Date.now()-lastDragEnd<350&&e.target.closest('.chip,[data-slot],[data-pool]')){return;}
+  if(S.page==='r2'&&S.r2&&S.r2.active&&!S.r2.active.locked){
+    const chip=e.target.closest('.chip');
+    if(chip){tapChip(chip);return;}
+    const sl=e.target.closest('[data-slot]');
+    if(sl){if(sel)placeChip(sel.idx,sel.from,sl.dataset.slot);return;}
+    const pl=e.target.closest('[data-pool]');
+    if(pl){if(sel&&sel.from!=='pool')placeChip(sel.idx,sel.from,'pool');return;}
+  }
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const act=el.dataset.act;
+  if(act==='mbg'){if(e.target===el)closeModal();return;}
+  if(el.closest('.mbox')&&act==='mbg')return;
+  ac();
+  const fn=A_[act];if(fn)fn(el,e);
+});
+
+/* ---------- RONDE 3 ---------- */
+const R3ASP=['Ketepatan mengidentifikasi rangsangan dan sistem indra','Ketepatan menjelaskan peran sistem saraf','Ketepatan menjelaskan peran sistem hormon','Kemampuan menghubungkan ketiga sistem secara logis'];
+const R3VAL=[0,4,7,10];
+function r3AllSaved(){return Object.values(S.r3.cases).filter(c=>c.saved).length===4;}
+function r3HTML(){
+  const r=S.r3;
+  if(r.view==='done')return doneHTML({title:'SELURUH MISI TELAH SELESAI!',score:r3Score,max:40,name:'Ronde 3',act:'toFinal',btn:'LIHAT HASIL AKHIR',icon:'🎯',
+    extra:'<button class="btn teach" data-act="r3Review">🔒 Periksa / Ubah Nilai</button>'});
+  if(r.active!=null)return r3CaseView();
+  const unsaved=Object.entries(r.cases).find(([b,c])=>!c.saved);
+  const t=unsaved?unsaved[1].team:r.turn;
+  const n=Object.values(r.cases).filter(c=>c.saved).length;
+  return `<div class="turnbar" style="${t==null?'':ts(t)}"><div class="who">${t==null?'Semua kasus terpilih':`Giliran: <span>${esc(nm(t))}</span>`}</div>
+   <div class="hint">${unsaved?'Nilai kasus yang sedang berjalan belum disimpan — ketuk kotak berwarna untuk melanjutkan.':'Pilih satu kotak kasus yang belum digunakan.'}</div>
+   <div class="prog">Kasus dinilai: ${n} / 4<div class="pbar"><i style="width:${n/4*100}%"></i></div></div></div>
+   <div class="cases">${range(4).map(b=>{
+     const c=r.cases[b];
+     if(c)return `<button class="box used ${c.saved?'':'pend'}" data-act="r3Open" data-b="${b}" style="${ts(c.team)}"><span class="lab">KASUS</span><div class="no">${b+1}</div><div class="res"><b>${esc(nm(c.team))} · ${c.saved?'✓ '+c.s.reduce((x,y)=>x+y,0)+'/40':'belum dinilai'}</b></div></button>`;
+     return `<button class="box" data-act="r3Open" data-b="${b}" style="animation-delay:${b*.08}s"><span class="lab" style="color:var(--yellow)">KASUS</span><div class="no">${b+1}</div><span class="q">?</span></button>`;}).join('')}</div>
+   <div style="text-align:center;color:var(--mut);font-weight:700">🔒 Guru: ketuk kotak yang sudah dinilai untuk memeriksa atau mengubah nilainya.</div>`;
+}
+function r3CaseView(){
+  const r=S.r3,b=r.active,c=r.cases[b],q=D.C[r.map[b]];
+  const tm=r.timer;
+  const total=c.s.reduce((x,y)=>x+(y||0),0);
+  const filled=c.s.every(v=>v!=null);
+  const rub=R3ASP.map((l,i)=>`<div class="asp"><div class="al"><span>${i+1}. ${l}</span><b>${c.s[i]==null?'–':c.s[i]}/10</b></div><div class="sc4">${R3VAL.map(v=>`<button class="sv ${c.s[i]===v?'on':''}" data-act="r3Set" data-a="${i}" data-v="${v}" ${c.saved?'disabled':''}>${v}</button>`).join('')}</div></div>`).join('');
+  return `<div class="c3 ${anim==='open'?'qwrap pop':''}" style="${ts(c.team)}"><div class="cl">
+   <div class="qhead"><span class="badge">${esc(nm(c.team))}</span><span class="badge n">Kasus ${b+1}</span></div>
+   <div class="casecard"><h2>🧩 ${esc(q.title)}</h2><div class="st">${esc(q.stim)}</div></div>
+   <div class="qbox"><small>PERTANYAAN</small>${esc(q.q)}</div>
+   <div class="hintc">💡 Petunjuk: ${esc(q.hint.replace(/^Petunjuk:?\s*/i,''))}</div>
+   <div class="tmr"><span class="tl">🔒 Waktu</span>${timerHTML(tm?tm.total:60,!tm)}<span class="tl" id="tmlabel" style="min-width:7rem">${tm?(tm.kind==='diskusi'?'Diskusi kelompok':'Menjawab lisan'):'Belum dimulai'}</span>
+    <button class="btn teach sm" data-act="r3Timer" data-k="diskusi">▶ Diskusi 60″</button><button class="btn teach sm" data-act="r3Timer" data-k="jawab">▶ Jawab 90″</button><button class="btn ghost sm" data-act="r3Timer" data-k="stop">■ Stop</button></div>
+   ${c.rev?`<div class="key"><b>Jawaban ideal (kunci):</b><div style="margin-top:.3rem;font-size:1.12rem">${esc(q.kunci)}</div></div><div class="pemb"><b>Pembahasan:</b> ${esc(q.pemb)}</div>
+     <div class="verdict ok">🏅 Skor ${esc(nm(c.team))}: ${total} / 40<span class="pts">${c.saved?'tersimpan':'belum disimpan'}</span></div>`:''}
+  </div>
+  <div class="rub"><h3>🔒 PANEL PENILAIAN GURU</h3>${rub}
+   <div class="legend">0 = tidak tepat / tidak dijawab · 4 = sebagian benar · 7 = benar tetapi kurang lengkap · 10 = benar dan lengkap</div>
+   <div class="tot"><span>TOTAL</span><span><b>${total}</b> / 40</span></div>
+   <div class="rbtns">
+    ${c.saved?`<button class="btn teach" data-act="r3Edit">✏️ UBAH NILAI</button>`:`<button class="btn teach solid" data-act="r3Save" ${filled?'':'style="opacity:.75"'}>💾 SIMPAN NILAI</button>`}
+    <button class="btn teach" data-act="r3Reveal" ${c.saved?'':'disabled'}>📖 TAMPILKAN PEMBAHASAN</button>
+    <button class="btn ghost" data-act="r3Back" style="grid-column:1/-1">⬅ KEMBALI KE PILIHAN KASUS</button>
+   </div></div></div>`;
+}
+A_.r3Open=function(el){
+  const r=S.r3,b=+el.dataset.b;if(r.active!=null)return;
+  let c=r.cases[b];
+  if(!c){
+    if(Object.values(r.cases).some(x=>!x.saved)){toast('Simpan nilai kasus yang sedang berjalan terlebih dahulu.');return;}
+    if(r.turn==null)return;
+    c={team:r.turn,s:[null,null,null,null],saved:false,rev:false};r.cases[b]=c;
+    r.turn=[1,2,3,4].map(k=>(c.team+k)%4).find(t=>!Object.values(r.cases).some(x=>x.team===t));
+    sfx('open');anim='open';
+  }
+  r.active=b;r.timer=null;lastTickSec=-1;commit();
+};
+A_.r3Set=function(el){const c=S.r3.cases[S.r3.active];if(!c||c.saved)return;c.s[+el.dataset.a]=+el.dataset.v;sfx('tap');commit();};
+A_.r3Save=function(){const c=S.r3.cases[S.r3.active];if(!c)return;if(c.s.some(v=>v==null)){toast('Lengkapi nilai pada keempat aspek terlebih dahulu.');return;}
+  c.saved=true;sfx('ok');commit();const sc=$(`[data-sc="r3${c.team}"]`);if(sc)sc.classList.add('bump');};
+A_.r3Edit=function(){const c=S.r3.cases[S.r3.active];if(!c)return;c.saved=false;commit();};
+A_.r3Reveal=function(){const c=S.r3.cases[S.r3.active];if(!c||!c.saved)return;c.rev=true;sfx('part');anim='reveal';commit();};
+A_.r3Back=function(){const r=S.r3;r.active=null;r.timer=null;if(r3AllSaved()&&r.view==='play'){r.view='done';sfx('done');confetti();}commit();};
+A_.r3Review=function(){S.r3.view='play';commit();};
+A_.r3Timer=function(el){
+  const r=S.r3,k=el.dataset.k;
+  if(k==='stop')r.timer=null;else{const tot=k==='diskusi'?60:90;r.timer={kind:k,total:tot,deadline:Date.now()+tot*1000,ended:false};sfx('tap');}
+  lastTickSec=-1;commit();
+};
+
+/* ---------- FINAL ---------- */
+const MEDAL=['🥇','🥈','🥉'];
+function finalHTML(){
+  const rk=ranking();const win=rk.filter(r=>r.rank===1);
+  const anyTie=rk.some(r=>r.unres);
+  const pod=[1,0,2].map(pos=>{const r=rk[pos];return `<div class="pcol p${pos+1}" style="${ts(r.t)}">${pos===0?'<div class="ic">🏆</div>':''}<div class="ic" style="${pos===0?'font-size:2.2rem':''}">${MEDAL[pos]}</div><div class="nm">${esc(nm(r.t))}</div><div class="pt">${fmt(r.total)} poin${r.unres?' · SERI':''}</div><div class="blk">${r.rank}</div></div>`;}).join('');
+  return `<div class="final ${lastPage!=='final'?'stage enter':''}">
+   <div class="hd"><h1>🎉 SELAMAT! MISI SISTEM KOORDINASI BERHASIL DISELESAIKAN! 🎉</h1>
+    <div class="win">${win.some(w=>w.unres)?'SERI! ':''}🏆 <span>JUARA 1 — ${win.map(w=>esc(nm(w.t).toUpperCase())).join(' & ')}</span> · ${fmt(win[0].total)} poin</div></div>
+   <div class="fcols"><div style="display:flex;flex-direction:column;gap:.4rem;height:100%;justify-content:center"><div class="podium">${pod}</div>
+     <div class="rest4">Juara 4 · <span>${esc(nm(rk[3].t))}</span> — ${fmt(rk[3].total)} poin${rk[3].unres?' (seri)':''}</div></div>
+    <div>${anyTie?`<div class="tiebar noprint">⚖️ Ada skor yang masih seri setelah pembanding Ronde 3. <button class="btn warn sm" data-act="tiebreak">SOAL PENENTU JUARA</button></div>`:''}
+     <table class="rc"><thead><tr><th style="text-align:left">TIM</th><th>RONDE 1<br>(30)</th><th>RONDE 2<br>(20)</th><th>RONDE 3<br>(40)</th><th>TOTAL<br>(90)</th><th>PERINGKAT</th></tr></thead><tbody>
+     ${rk.map(r=>`<tr style="${ts(r.t)}"><td>${esc(nm(r.t))}</td><td>${fmt(r.r1)}</td><td>${fmt(r.r2)}</td><td>${fmt(r.r3)}</td><td class="tt">${fmt(r.total)}</td><td class="rk0">${r.rank<=3?MEDAL[r.rank-1]:''} ${r.rank}${r.unres?'<br><small>seri</small>':''}</td></tr>`).join('')}</tbody></table>
+     <div style="color:var(--mut);font-size:.8rem;margin-top:.3rem">TOTAL = Ronde 1 + Ronde 2 + Ronde 3. Jika seri, urutan ditentukan oleh skor Ronde 3, kemudian soal penentu dari guru.</div></div></div>
+   <div class="fbtns noprint"><button class="btn alt" data-act="detail">📊 LIHAT DETAIL NILAI</button><button class="btn" data-act="print">🖨️ CETAK HASIL</button><button class="btn warn" data-act="csv">⬇ UNDUH REKAP NILAI</button><button class="btn danger" data-act="again">↺ MAIN LAGI</button>
+    <button class="ibtn" data-act="sound" aria-label="Suara">${S.sound?'🔊':'🔇'}</button><button class="tbtn" data-act="teacher">🔒 Panel Guru</button></div></div>`;
+}
+function detailHTML(){
+  const rk=ranking();
+  const cards=range(4).map(t=>{
+    const r=totals(t);
+    const r1=Object.entries(S.r1.results).filter(([b,x])=>x.team===t).sort((a,b)=>a[1].q-b[1].q);
+    const a=Object.values(S.r2.doneA).find(x=>x.team===t),bb=Object.values(S.r2.doneB).find(x=>x.team===t);
+    const ce=r3Case(t);const cq=ce&&D.C[S.r3.map[+ce[0]]];
+    return `<div class="dc" style="${ts(t)}"><h3>${esc(nm(t))}<b>${fmt(r.total)} / 90 · #${rk.find(x=>x.t===t).rank}</b></h3>
+     <h4>RONDE 1 — ${fmt(r.r1)} / 30</h4><div class="il">${r1.map(([b,x])=>`<span class="${x.ok?'g':'r'}">Kotak ${+b+1}: ${x.ok?'benar +10':(x.timeout?'waktu habis 0':'salah 0')}</span>`).join('')||'–'}</div>
+     <h4>RONDE 2 — ${fmt(r.r2)} / 20</h4><ul><li>Urutan: ${a?`${esc(D.A[a.q].title)} — ${a.correct}/5 benar = <b>${fmt(a.score)}</b>`:'–'}</li><li>Mencocokkan: ${bb?`${esc(D.B[bb.q].title)} — ${bb.correct}/4 benar = <b>${fmt(bb.score)}</b>`:'–'}</li></ul>
+     <h4>RONDE 3 — ${fmt(r.r3)} / 40</h4>${ce&&ce[1].saved?`<div class="il"><span>${esc(cq.title)}</span>${ce[1].s.map((v,i)=>`<span>${['Indra','Saraf','Hormon','Integrasi'][i]}: <b>${v}</b></span>`).join('')}</div>`:'<div class="il">–</div>'}</div>`;
+  }).join('');
+  return `<div class="detail ${lastPage!=='detail'?'stage enter':''}"><div class="top"><div class="brand"><div class="logo">🧠</div><div><b>COORDINATION</b><small>CHALLENGE · IPA IX</small></div></div><div class="rtitle"><h1>DETAIL HASIL PENILAIAN</h1><p>Rincian skor setiap tim pada tiga ronde</p></div>${ctrlsHTML()}</div>
+   <div class="dgrid">${cards}</div><div class="fbtns noprint"><button class="btn" data-act="toFinalBack">⬅ KEMBALI KE HASIL AKHIR</button><button class="btn" data-act="print">🖨️ CETAK</button></div></div>`;
+}
+A_.detail=function(){S.page='detail';commit();};
+A_.toFinalBack=function(){S.page='final';commit();};
+A_.print=function(){try{window.print();}catch(e){toast('Pencetakan tidak tersedia di perangkat ini.');}};
+A_.csv=function(){
+  const rk=ranking();const q=v=>'"'+String(v).replace(/"/g,'""')+'"';const n=v=>String(v).replace('.',',');
+  const lines=['sep=;',['Peringkat','Tim','Ronde 1 (maks 30)','Ronde 2 (maks 20)','Ronde 3 (maks 40)','Total (maks 90)','Keterangan'].map(q).join(';')];
+  rk.forEach(r=>lines.push([r.rank,q(nm(r.t)),n(r.r1),n(r.r2),n(r.r3),n(r.total),q(r.unres?'Seri':'')].join(';')));
+  const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='rekap-nilai-coordination-challenge.csv';document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);toast('Rekap nilai diunduh (CSV, dapat dibuka di Excel).');
+};
+A_.again=function(){confirmBox('Main lagi?','Seluruh data permainan sebelumnya (skor dan progres) akan dihapus. Lanjutkan?','Ya, mulai baru',()=>resetGame());};
+function resetGame(){closeModal();try{localStorage.removeItem(KEY);}catch(e){}const nmz=S.names.slice();S=fresh();S.names=nmz;sel=null;parts=[];lastPage=null;render();}
+
+/* ---- soal penentu ---- */
+let tbState=null;
+A_.tiebreak=function(){
+  const rk=ranking();const keys=[...new Set(rk.filter(r=>r.unres).map(r=>r.tieKey))];
+  tbState={keys,ki:0,q:0,show:false,order:[]};tbModal();
+};
+function tbModal(){
+  const st=tbState,key=st.keys[st.ki];const rk=ranking();
+  const g=rk.filter(r=>r.tieKey===key).map(r=>r.t);
+  const bq=BQ[st.q%BQ.length];
+  modal(`<h2>⚖️ Soal Penentu Juara</h2><p>Tim yang seri: <b>${g.map(t=>esc(nm(t))).join(', ')}</b> (total dan skor Ronde 3 sama). Guru membacakan soal tambahan, lalu menetapkan urutan tim dari yang terbaik.</p>
+   <div class="bq">${esc(bq.q)}</div>${st.show?`<div class="pemb"><b>Jawaban:</b> ${esc(bq.a)}</div>`:''}
+   <div class="mrow" style="justify-content:flex-start"><button class="btn ghost sm" data-act="tbShow">👁 Tampilkan jawaban</button><button class="btn ghost sm" data-act="tbNext">⟳ Soal lain</button></div>
+   <div class="sec">KETUK TIM SESUAI URUTAN, DARI PEMENANG (URUTAN 1) KE BAWAH</div>
+   <div class="chips">${g.map(t=>`<button class="tg ${st.order.includes(t)?'on':''}" style="${ts(t)}" data-act="tbPick" data-t="${t}" ${st.order.includes(t)?'disabled':''}>${st.order.includes(t)?(st.order.indexOf(t)+1)+'. ':''}${esc(nm(t))}</button>`).join('')}</div>
+   <div class="mrow"><button class="btn ghost" data-act="closeModal">Tutup</button><button class="btn ghost" data-act="tbClear">Ulangi urutan</button></div>`);
+}
+A_.tbShow=function(){tbState.show=true;tbModal();};
+A_.tbNext=function(){tbState.q++;tbState.show=false;tbState.order=[];tbModal();};
+A_.tbClear=function(){tbState.order=[];tbModal();};
+A_.tbPick=function(el){
+  const st=tbState;st.order.push(+el.dataset.t);
+  const rk=ranking();const g=rk.filter(r=>r.tieKey===st.keys[st.ki]).length;
+  if(st.order.length===g){S.tb[st.keys[st.ki]]=st.order.slice();save();st.ki++;st.order=[];st.show=false;
+    if(st.ki>=st.keys.length){closeModal();toast('Urutan juara ditetapkan.');render();sfx('ok');return;}}
+  tbModal();
+};
+
+/* ---------- PANEL GURU ---------- */
+A_.teacher=function(){
+  let h=`<h2>🔒 Panel Guru</h2><div class="sec">STATUS</div><p style="margin:.2rem 0">${S.page==='home'?'Permainan belum dimulai.':'Halaman: <b>'+({r1:'Ronde 1',r2:'Ronde 2',r3:'Ronde 3',final:'Hasil Akhir',detail:'Detail Nilai'}[S.page])+'</b>'}</p>`;
+  if(S.page==='r2'&&S.r2.view==='play'&&!S.r2.active){
+    h+=`<div class="sec">UBAH GILIRAN RONDE 2</div><div class="chips">${range(4).map(t=>`<button class="tg ${S.r2.turn===t?'on':''}" style="${ts(t)}" data-act="setTurn2" data-t="${t}" ${(r2has('A',t)&&r2has('B',t))?'disabled':''}>${esc(nm(t))}</button>`).join('')}</div>`;
+  }
+  if(S.page==='r3'&&S.r3.view==='play'&&S.r3.active==null){
+    h+=`<div class="sec">UBAH GILIRAN RONDE 3</div><div class="chips">${range(4).map(t=>`<button class="tg ${S.r3.turn===t?'on':''}" style="${ts(t)}" data-act="setTurn3" data-t="${t}" ${r3Case(t)?'disabled':''}>${esc(nm(t))}</button>`).join('')}</div>`;
+  }
+  h+=`<div class="sec">PENGATURAN</div><div class="chips"><button class="btn ghost sm" data-act="sound">${S.sound?'🔊 Suara: Aktif':'🔇 Suara: Mati'}</button><button class="btn ghost sm" data-act="fs">⛶ Layar penuh</button></div>`;
+  if(['r1','r2','r3'].includes(S.page)){
+    const v=S[S.page].view;
+    h+=`<div class="sec">PENGECUALIAN KELAS</div><p style="margin:.2rem 0 .5rem;font-size:.95rem">Gunakan hanya bila ada tim yang tidak dapat menyelesaikan soal atau penilaian karena kondisi kelas. Soal/penilaian yang belum selesai akan dihitung 0.</p><button class="btn warn sm" data-act="forceDone" ${v==='done'?'disabled':''}>⏭ Akhiri ronde ini sekarang</button>`;
+  }
+  h+=`<div class="sec">DATA PERMAINAN</div><button class="btn danger sm" data-act="resetAsk">🗑 Reset permainan</button>
+   <div class="mrow"><button class="btn" data-act="closeModal">Tutup</button></div>`;
+  modal(h);
+};
+A_.setTurn2=function(el){S.r2.turn=+el.dataset.t;commit();A_.teacher();};
+A_.setTurn3=function(el){S.r3.turn=+el.dataset.t;commit();A_.teacher();};
+A_.forceDone=function(){
+  confirmBox('Akhiri ronde sekarang?','Ronde ini akan dinyatakan selesai walaupun belum semua soal/penilaian tuntas. Bagian yang belum dikerjakan bernilai 0.','Ya, akhiri',()=>{
+    closeModal();const p=S.page;
+    if(p==='r1'){S.r1.active=null;S.r1.view='done';}
+    if(p==='r2'){S.r2.active=null;S.r2.view='done';sel=null;}
+    if(p==='r3'){S.r3.active=null;S.r3.timer=null;S.r3.view='done';}
+    sfx('done');confetti();commit();},'warn');
+};
+A_.resetAsk=function(){confirmBox('Reset permainan?','Seluruh skor dan progres akan dihapus dan permainan kembali ke halaman awal.','Ya, reset',()=>resetGame());};
+A_.closeModal=closeModal;
+A_.confirmYes=function(){const f=confirmBox.fn;closeModal();if(f)f();};
+A_.sound=function(){S.sound=!S.sound;save();if(S.sound)sfx('tap');
+  if($('.modal'))A_.teacher();render();};
+A_.fs=toggleFs;
+A_.start=function(){
+  $$('.tname').forEach(i=>{S.names[+i.dataset.i]=(i.value.trim().slice(0,18))||DEFNAMES[+i.dataset.i];});
+  const seen=new Set();S.names=S.names.map(n=>{let b=n,k=2;while(seen.has(n.toLowerCase()))n=b+' '+(k++);seen.add(n.toLowerCase());return n;});
+  S.r1={map:shuffle(range(12)),results:{},active:null,view:'play'};S.r2=null;S.r3=null;S.tb={};
+  S.page='r1';fs();sfx('start');commit();
+};
+document.addEventListener('input',e=>{if(e.target.classList&&e.target.classList.contains('tname')){S.names[+e.target.dataset.i]=e.target.value.slice(0,18);save();}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('tname'))e.target.blur();});
+Object.assign(A_,{});
+
+/* ---------- start ---------- */
+render();
+if(resumed)setTimeout(()=>toast('Permainan dilanjutkan dari halaman terakhir.'),500);
+window.__S=()=>S;
+</script>
+</body>
+</html>
